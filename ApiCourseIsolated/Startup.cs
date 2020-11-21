@@ -38,7 +38,7 @@ namespace ApiCourseIsolated
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
+
 
             //DB data connect
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -48,9 +48,7 @@ namespace ApiCourseIsolated
                                                        );
 
 
-            //IDENTITY SERVICES
-            //orig            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
-            /* new custom user */
+            //IDENTITY SERVICES with custom user 
             services.AddIdentity<CustomUser, IdentityRole>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;
@@ -85,19 +83,8 @@ namespace ApiCourseIsolated
             //Default
             services.AddControllers();
 
-            ////Dependency Inyections
-            //services.AddTransient<IOperationTransient, Operation>();
-            //services.AddScoped<IOperationScoped, Operation>();
-            //services.AddSingleton<IOperationSingleton, Operation>();
-
-            //services.AddTransient<IAuthenticationService, AuthenticationService>();
-            //  services.AddScoped<IAuthenticationService, AuthenticationService>();
-            //*Incompatible services.AddSingleton<IAuthenticationService, AuthenticationService>();
-
+            //Dependency Inyections
             services.AddScoped<IAuthenticateService, AuthenticateService>();
-
-
-
 
             //Swagger
             services.AddSwaggerGen(c =>
@@ -106,8 +93,6 @@ namespace ApiCourseIsolated
                         new Microsoft.OpenApi.Models.OpenApiInfo { Title = "API", Version = "v1" });
 
             });
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
