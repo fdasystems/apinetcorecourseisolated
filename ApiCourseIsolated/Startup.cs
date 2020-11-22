@@ -31,9 +31,11 @@ namespace ApiCourseIsolated
 
             //DB data connect
             services.AddDbContext<ApplicationDbContext>(options =>
-                                                            options.UseSqlServer(
-                                                                 Configuration.GetConnectionString("DefaultConnection")
-                                                                                )
+                                                        options
+                                                        .UseSqlServer
+                                                            (Configuration
+                                                                .GetConnectionString("DefaultConnection")
+                                                            )
                                                        );
 
 
@@ -44,6 +46,7 @@ namespace ApiCourseIsolated
                 options.User.RequireUniqueEmail = true;
             })
             .AddEntityFrameworkStores<ApplicationDbContext>();
+
 
             //AUTHENTICATION
             string valueKey = Configuration["secret_key_jwt_config"];
