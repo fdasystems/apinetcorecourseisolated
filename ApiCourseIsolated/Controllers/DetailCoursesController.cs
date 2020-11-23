@@ -1,17 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ApiCourseIsolated.Data;
 using ApiCourseIsolated.Entities;
+using ApiCourseIsolated.Entities.RequestDto;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using ApiCourseIsolated.Common;
 
 namespace ApiCourseIsolated.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class DetailCoursesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -28,7 +31,64 @@ namespace ApiCourseIsolated.Controllers
             return await _context.DetailCourse.Include(x=>x.MainCourse).ToListAsync();
         }
 
+        
+        // GET: api/GetLinkDefaultDetailCourseFromMain/5
+        [HttpGet("GetLinkDefaultDetailCourseFromMain/{idMainCourse}")]
+        public async Task<ActionResult<string>> GetLinkDefaultDetailCourseFromMain(int idMainCourse)
+        {
+            //var claimUser = _
+            var detailCourse = await _context.DetailCourse.Where(x => x.MainCourseId == idMainCourse).FirstOrDefaultAsync(); // .FirstOrDefault();   //.FindAsync(id);
+
+            if (detailCourse == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(detailCourse.UrlLink);
+        }
+
+
+        // Post: api/GetLinkDefaultDetailCourseFromMain/1/5
+        [HttpGet("GetLinkDetailCourseFromMainAndOrder")]
+        public async Task<ActionResult<string>> GetLinkDetailCourseFromMainAndOrder([FromQuery] int IdMainCourse, int OrderNumber)
+        {
+            DetailRequestDto detailRequestDto = new DetailRequestDto() { idMainCourse= IdMainCourse, orderNumber= OrderNumber };
+            var detailCourse = await _context.DetailCourse.Where(x => 
+                                                                     x.MainCourseId == detailRequestDto.idMainCourse 
+                                                                     && x.Order == detailRequestDto.orderNumber
+                                                                ).FirstOrDefaultAsync(); 
+            if (detailCourse == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(detailCourse.UrlLink);
+        }
+
+        [HttpGet("GetLinkDetailCourseFromClaimUser")]
+        public async Task<ActionResult<string>> GetLinkDetailCourseFromClaimUser()
+        {
+            string claimName = Constants.CourseClaimName;
+            int IdMainCourse = int.Parse (this.User.Claims.Where(x => x.Type == claimName).FirstOrDefault().Value);
+            int OrderNumber = 1;
+
+            DetailRequestDto detailRequestDto = new DetailRequestDto() { idMainCourse = IdMainCourse, orderNumber = OrderNumber };
+            var detailCourse = await _context.DetailCourse.Where(x =>
+                                                                     x.MainCourseId == detailRequestDto.idMainCourse
+                                                                     && x.Order == detailRequestDto.orderNumber
+                                                                ).FirstOrDefaultAsync();
+            if (detailCourse == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(detailCourse.UrlLink);
+        }
+
+
+
         // GET: api/DetailCourses/5
+        //  [Route("GetDetailCourse")]
         [HttpGet("{id}")]
         public async Task<ActionResult<DetailCourse>> GetDetailCourse(int id)
         {

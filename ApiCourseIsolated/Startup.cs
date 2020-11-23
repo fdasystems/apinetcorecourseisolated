@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using ApiCourseIsolated.Services.Contracts;
 using ApiCourseIsolated.Services;
+using System;
 
 namespace ApiCourseIsolated
 {
@@ -67,14 +68,14 @@ namespace ApiCourseIsolated
                                                 ValidateIssuerSigningKey = true,
                                                 IssuerSigningKey = new SymmetricSecurityKey(key),
                                                 ValidateIssuer = false,
-                                                ValidateAudience = false
+                                                ValidateAudience = false,
+                                                ClockSkew=TimeSpan.Zero
                                             };
                                     }
                                 );
 
             //Default
-           // services.AddControllers();
-
+            //services.AddControllers();
             //Special Configs
             services.AddControllers().AddNewtonsoftJson(options =>
                              options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore

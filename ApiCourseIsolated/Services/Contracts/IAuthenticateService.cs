@@ -10,5 +10,6 @@ namespace ApiCourseIsolated.Services.Contracts
     {
         public Task<string> CreateUserAsync(UserRequestDto userRequest);
         public Task<string> AuthenticateAsync(UserRequestDto userRequest);
+        public Task<bool> CreateClaimToUserAsync(ClaimToUserRequestDto claimToUserRequestDtoRequest);
     }
 }

@@ -53,5 +53,22 @@ namespace ApiCourseIsolated.Controllers
 
             return BadRequest("policy required not accomplished");
         }
+
+        [Route("CreateClaimToUser")]
+        [HttpPost]
+        public async Task<IActionResult> CreateClaimToUser(ClaimToUserRequestDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                bool result = await _authenticateService.CreateClaimToUserAsync(model);
+
+                if (result)
+                {
+                    return Ok(result);
+                }
+            }
+
+            return BadRequest("Failed when try to assign Claim");
+        }
     }
 }

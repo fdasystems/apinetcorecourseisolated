@@ -1,17 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ApiCourseIsolated.Data;
 using ApiCourseIsolated.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using ApiCourseIsolated.Common;
 
 namespace ApiCourseIsolated.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class MainCoursesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -34,6 +36,15 @@ namespace ApiCourseIsolated.Controllers
         public async Task<ActionResult<IEnumerable<MainCourse>>> GetMainCoursesWithDetails()
         {
             return await _context.MainCourse.Include(x=> x.Details).ToListAsync();
+        }
+
+        [Route("GetMyMainCoursesWithDetails")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<MainCourse>>> GetMyMainCoursesWithDetails()
+        {
+            string claimName = Constants.CourseClaimName;
+            int userLevel = int.Parse(this.User.Claims.Where(x => x.Type == claimName).FirstOrDefault().Value);
+            return await _context.MainCourse.Include(x => x.Details).Where(o=> o.LevelRequired==userLevel).ToListAsync();
         }
 
         // GET: api/MainCourses/5
