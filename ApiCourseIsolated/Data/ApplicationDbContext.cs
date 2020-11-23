@@ -10,26 +10,32 @@ namespace ApiCourseIsolated.Data
 {
     public class ApplicationDbContext : IdentityDbContext<CustomUser>
     {
-        
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
-        /*
-        public ApplicationDbContext()
-        {
-        }*/
 
-
-        public DbSet<MainCourse> MainCourse { get; set; }      
+        public DbSet<MainCourse> MainCourse { get; set; }
         public DbSet<DetailCourse> DetailCourse { get; set; }
-        
-        /*  Ver si hace falta 
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            /*  Ver si hace falta 
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+            */
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<MainCourse>()
+            .HasIndex(u => u.Name)
+            .IsUnique();
+
+            modelBuilder.Entity<DetailCourse>()
+            .HasIndex(u => new { u.MainCourseId, u.Order })
+            .IsUnique();
         }
-        */
-       
+
+
     }
 }

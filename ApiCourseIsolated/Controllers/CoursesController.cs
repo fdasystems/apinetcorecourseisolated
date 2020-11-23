@@ -18,6 +18,7 @@ namespace ApiCourseIsolated.Controllers
         public IActionResult Get()
         {
             return Ok("tesst");
+            
         }
     }
 

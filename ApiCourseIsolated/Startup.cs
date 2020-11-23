@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using ApiCourseIsolated.Services.Contracts;
 using ApiCourseIsolated.Services;
+using System;
 
 namespace ApiCourseIsolated
 {
@@ -67,13 +68,19 @@ namespace ApiCourseIsolated
                                                 ValidateIssuerSigningKey = true,
                                                 IssuerSigningKey = new SymmetricSecurityKey(key),
                                                 ValidateIssuer = false,
-                                                ValidateAudience = false
+                                                ValidateAudience = false,
+                                                ClockSkew=TimeSpan.Zero
                                             };
                                     }
                                 );
 
             //Default
-            services.AddControllers();
+            //services.AddControllers();
+            //Special Configs
+            services.AddControllers().AddNewtonsoftJson(options =>
+                             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                                                        );
+
 
             //Dependency Inyections
             services.AddScoped<IAuthenticateService, AuthenticateService>();
@@ -85,6 +92,8 @@ namespace ApiCourseIsolated
                         new Microsoft.OpenApi.Models.OpenApiInfo { Title = "API", Version = "v1" });
 
             });
+
+  
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
