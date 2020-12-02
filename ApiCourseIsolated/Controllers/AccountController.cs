@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using ApiCourseIsolated.Entities.RequestDto;
+using ApiCourseIsolated.Entities.ResponseDto;
 using ApiCourseIsolated.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +22,8 @@ namespace ApiCourseIsolated.Controllers
 
         [Route("Login")]
         [HttpPost]
-        public async Task<IActionResult> LoginTokenFromService([FromBody] UserRequestDto model)
+      //  public async Task<IActionResult> LoginTokenFromService([FromBody] UserRequestDto model)
+        public async Task<JsonResult> LoginTokenFromService([FromBody] UserRequestDto model)
         {
             if (ModelState.IsValid)
             {
@@ -30,11 +32,22 @@ namespace ApiCourseIsolated.Controllers
 
                 if (token != null)
                 {
-                    return Ok(token);
+
+                    UserDataResponseDto userData = new UserDataResponseDto() 
+                    {
+                     UserName = model.userName,
+                     Token = token,
+                     ExpirationDate = string.Empty //Then replace value if this property is used
+                    };
+
+                    //return Ok(token);
+                   // return new JsonResult(token);
+                    return new JsonResult(userData);
                 }
             }
 
-            return BadRequest("invalid login");
+            //return BadRequest("invalid login");
+            return null;
         }
 
         [Route("Create")]
