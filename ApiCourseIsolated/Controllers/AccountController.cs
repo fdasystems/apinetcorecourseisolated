@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using ApiCourseIsolated.Entities.RequestDto;
+using ApiCourseIsolated.Entities.ResponseDto;
 using ApiCourseIsolated.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,20 +23,43 @@ namespace ApiCourseIsolated.Controllers
 
         [Route("Login")]
         [HttpPost]
-        public async Task<IActionResult> LoginTokenFromService([FromBody] UserRequestDto model)
+      //  public async Task<IActionResult> LoginTokenFromService([FromBody] UserRequestDto model)
+        public async Task<JsonResult> LoginTokenFromService([FromBody] UserRequestDto model)
         {
             if (ModelState.IsValid)
             {
                 //if (this.User.Identity.IsAuthenticated)
-                var token = await _authenticateService.AuthenticateAsync(model);
-
-                if (token != null)
+                try
                 {
-                    return Ok(token);
+                    var token = await _authenticateService.AuthenticateAsync(model);
+
+                    if (token != null)
+                    {
+
+                        UserDataResponseDto userData = new UserDataResponseDto()
+                        {
+                            UserName = model.userName,
+                            Token = token,
+                            ExpirationDate = string.Empty //Then replace value if this property is used
+                        };
+
+                        //return Ok(token);
+                        // return new JsonResult(token);
+                        return new JsonResult(userData);
+                    }
+                }
+                catch (Exception e)
+                {
+                    string inner = e.InnerException != null ? e.InnerException.Message : string.Empty;
+                    string error= "ERROR Mesagge:" + e.Message + "||||Inner" +  inner ;
+                    error += "|||Stactrace:" + e.StackTrace;
+                    //throw;
+                    return new JsonResult(error);
                 }
             }
 
-            return BadRequest("invalid login");
+            //return BadRequest("invalid login");
+            return null;
         }
 
         [Route("Create")]

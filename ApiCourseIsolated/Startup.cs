@@ -33,7 +33,7 @@ namespace ApiCourseIsolated
             //DB data connect
             services.AddDbContext<ApplicationDbContext>(options =>
                                                         options
-                                                        .UseSqlServer
+                                                        .UseMySql
                                                             (Configuration
                                                                 .GetConnectionString("DefaultConnection")
                                                             )
@@ -93,7 +93,18 @@ namespace ApiCourseIsolated
 
             });
 
-  
+            //Add Cors default (then replace)
+            //services.AddCors();
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder  .AllowAnyOrigin()
+                  //     .WithOrigins("http://localhost:3000",
+                  //                  "https://localhost:3000")
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -107,7 +118,7 @@ namespace ApiCourseIsolated
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseCors("MyPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
 
