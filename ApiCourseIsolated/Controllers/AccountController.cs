@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using ApiCourseIsolated.Entities.RequestDto;
 using ApiCourseIsolated.Entities.ResponseDto;
 using ApiCourseIsolated.Services.Contracts;
@@ -28,21 +29,32 @@ namespace ApiCourseIsolated.Controllers
             if (ModelState.IsValid)
             {
                 //if (this.User.Identity.IsAuthenticated)
-                var token = await _authenticateService.AuthenticateAsync(model);
-
-                if (token != null)
+                try
                 {
+                    var token = await _authenticateService.AuthenticateAsync(model);
 
-                    UserDataResponseDto userData = new UserDataResponseDto() 
+                    if (token != null)
                     {
-                     UserName = model.userName,
-                     Token = token,
-                     ExpirationDate = string.Empty //Then replace value if this property is used
-                    };
 
-                    //return Ok(token);
-                   // return new JsonResult(token);
-                    return new JsonResult(userData);
+                        UserDataResponseDto userData = new UserDataResponseDto()
+                        {
+                            UserName = model.userName,
+                            Token = token,
+                            ExpirationDate = string.Empty //Then replace value if this property is used
+                        };
+
+                        //return Ok(token);
+                        // return new JsonResult(token);
+                        return new JsonResult(userData);
+                    }
+                }
+                catch (Exception e)
+                {
+                    string inner = e.InnerException != null ? e.InnerException.Message : string.Empty;
+                    string error= "ERROR Mesagge:" + e.Message + "||||Inner" +  inner ;
+                    error += "|||Stactrace:" + e.StackTrace;
+                    //throw;
+                    return new JsonResult(error);
                 }
             }
 

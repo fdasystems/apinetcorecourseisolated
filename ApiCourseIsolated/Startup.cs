@@ -33,7 +33,7 @@ namespace ApiCourseIsolated
             //DB data connect
             services.AddDbContext<ApplicationDbContext>(options =>
                                                         options
-                                                        .UseSqlServer
+                                                        .UseMySql
                                                             (Configuration
                                                                 .GetConnectionString("DefaultConnection")
                                                             )
@@ -97,7 +97,9 @@ namespace ApiCourseIsolated
             //services.AddCors();
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {
-                builder.AllowAnyOrigin()
+                builder  .AllowAnyOrigin()
+                  //     .WithOrigins("http://localhost:3000",
+                  //                  "https://localhost:3000")
                        .AllowAnyMethod()
                        .AllowAnyHeader();
             }));
