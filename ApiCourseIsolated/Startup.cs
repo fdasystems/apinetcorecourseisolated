@@ -13,11 +13,13 @@ using Microsoft.IdentityModel.Tokens;
 using ApiCourseIsolated.Services.Contracts;
 using ApiCourseIsolated.Services;
 using System;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace ApiCourseIsolated
 {
     public class Startup
     {
+        readonly string MyAllowSpecificOrigins = "MyPolicy";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -69,7 +71,7 @@ namespace ApiCourseIsolated
                                                 IssuerSigningKey = new SymmetricSecurityKey(key),
                                                 ValidateIssuer = false,
                                                 ValidateAudience = false,
-                                                ClockSkew=TimeSpan.Zero
+                                                ClockSkew = TimeSpan.Zero
                                             };
                                     }
                                 );
@@ -95,14 +97,48 @@ namespace ApiCourseIsolated
 
             //Add Cors default (then replace)
             //services.AddCors();
+            /*
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {
-                builder  .AllowAnyOrigin()
-                  //     .WithOrigins("http://localhost:3000",
-                  //                  "https://localhost:3000")
+                builder
+                       //ALLREQUESTSOUNDS LIKE DOESNT WORK  .AllowAnyOrigin()
+                       .WithOrigins("http://localhost:3000",
+                                    "https://localhost:3000",
+                                    "http://www.tecapacitacionescursos.com.ar/",
+                                    "https://www.tecapacitacionescursos.com.ar/")
+                       .AllowCredentials()
                        .AllowAnyMethod()
                        .AllowAnyHeader();
             }));
+            */
+            /*
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                builder =>
+                {
+                    builder.SetIsOriginAllowed(isOriginAllowed: _ => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                });
+            });
+            */
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                builder =>
+                {
+                    builder
+                    .WithOrigins("http://localhost:3000",
+                                    "https://localhost:3000",
+                                    "http://localhost:8081",
+                                    "https://localhost:8081",
+                                    "http://www.tecapacitacionescursos.com.ar/",
+                                    "https://www.tecapacitacionescursos.com.ar/",
+                                    "http://www.tecapacitacionescursos.com.ar",
+                                    "https://www.tecapacitacionescursos.com.ar")
+                    .SetIsOriginAllowed(isOriginAllowed: _ => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                });
+            });
+
 
 
         }
@@ -118,7 +154,12 @@ namespace ApiCourseIsolated
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            app.UseCors("MyPolicy");
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders =  ForwardedHeaders.XForwardedFor |
+                                    ForwardedHeaders.XForwardedProto
+            });
+            app.UseCors(MyAllowSpecificOrigins);
             app.UseAuthentication();
             app.UseAuthorization();
 

@@ -3,11 +3,12 @@ using System.Threading.Tasks;
 using ApiCourseIsolated.Entities.RequestDto;
 using ApiCourseIsolated.Entities.ResponseDto;
 using ApiCourseIsolated.Services.Contracts;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiCourseIsolated.Controllers
 {
-    [Route("api/[controller]")]
+    [EnableCors("MyPolicy"), Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -54,7 +55,16 @@ namespace ApiCourseIsolated.Controllers
                     string error= "ERROR Mesagge:" + e.Message + "||||Inner" +  inner ;
                     error += "|||Stactrace:" + e.StackTrace;
                     //throw;
-                    return new JsonResult(error);
+
+                    UserDataResponseDto userData = new UserDataResponseDto()
+                    {
+                        UserName = model.userName,
+                        Token = error,
+                        ExpirationDate = string.Empty //Then replace value if this property is used
+                    };
+
+
+                    return new JsonResult(userData);
                 }
             }
 
