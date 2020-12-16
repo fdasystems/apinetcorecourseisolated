@@ -42,14 +42,25 @@ namespace ApiCourseIsolated.Controllers
         [Route("GetMyMainCoursesWithDetails")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MainCourse>>> GetMyMainCoursesWithDetails()
-        //change Task<JsonResult>
-        //   public async Task<JsonResult<IEnumerable<MainCourse>>> GetMyMainCoursesWithDetails()
         {
             string claimName = Constants.CourseClaimName;
             int[] userLevels = this.User.Claims.Where(x => x.Type == claimName).Select(x => int.Parse(x.Value)).ToArray(); //.ToArray().ToList();
             var result = await _context.MainCourse.Include(x => x.Details).Where(o => userLevels.Contains(o.LevelRequired)).OrderBy(z => z.Id).ToListAsync();
             return result;
         }
+
+        [Route("GetMainCoursesWithDetailsFromUserName")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<MainCourse>>> GetMainCoursesWithDetailsFromUserName(string UserName)
+        {
+            string claimName = Constants.CourseClaimName;
+            var user = await _context.Users.Where(x => x.UserName == UserName).FirstOrDefaultAsync();
+            int[] userLevels = await _context.UserClaims.Where(y => y.UserId == user.Id && y.ClaimType == claimName).Select(x => int.Parse(x.ClaimValue)).ToArrayAsync();
+            var result = await _context.MainCourse.Include(x => x.Details).Where(o => userLevels.Contains(o.LevelRequired)).OrderBy(z => z.Id).ToListAsync();
+            return result;
+        }
+
+
 
         // GET: api/MainCourses/5
         [HttpGet("{id}")]

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace ApiCourseIsolated.Entities.ResponseDto
 {
@@ -9,6 +10,5 @@ namespace ApiCourseIsolated.Entities.ResponseDto
     {
         public string UserName { get; set; }
         public string Token { get; set; }
-        public string ExpirationDate { get; set; }
     }
 }

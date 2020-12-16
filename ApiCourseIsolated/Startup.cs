@@ -14,6 +14,7 @@ using ApiCourseIsolated.Services.Contracts;
 using ApiCourseIsolated.Services;
 using System;
 using Microsoft.AspNetCore.HttpOverrides;
+using ApiCourseIsolated.Common;
 
 namespace ApiCourseIsolated
 {
@@ -48,6 +49,7 @@ namespace ApiCourseIsolated
                 options.SignIn.RequireConfirmedAccount = false;
                 options.User.RequireUniqueEmail = true;
             })
+            .AddErrorDescriber<SpanishIdentityErrorDescriber>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
 
