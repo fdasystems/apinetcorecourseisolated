@@ -3,12 +3,13 @@ import authHeader from './auth-header';
 import customHeader from './custom-header';
 import AuthService from "./auth.service";
 import { Redirect } from "react-router-dom";
+import CourseToUser from './types/CourseToUser.ts';
 //no iria... import React from 'react';
 //no iria... import ReactDOM from 'react-dom';
 
 
-//const API_URL = 'https://localhost:44394/api/';
-const API_URL = "http://apicourseisolated.azurewebsites.net/api/";
+const API_URL = 'https://localhost:44394/api/';
+//const API_URL = "http://apicourseisolated.azurewebsites.net/api/";
 
 class UserService {
   getPublicContent() {
@@ -75,8 +76,70 @@ class UserService {
   }
 
   getAdminBoard() {
-    return axios.get(API_URL + 'admin', { headers: authHeader() });
+    return axios.get(API_URL + 'Account/GetAllUsers', { headers: authHeader() });
   }
+
+  getMainCoursesWithDetailsFromUserName(userName) {
+
+    /* probar con INTERCEPTORS  .. ver si despues se deben mover a un common o algo asi...  */
+
+    /*InterceptorRequest=ok*/
+    axios.interceptors.request.use(function (config) {
+     config.headers = authHeader();
+      return config;
+    }, function (error) {
+      // Do something with request error
+      return Promise.reject(error);
+    });
+
+    /*InterceptorResponse */
+    axios.interceptors.response.use(response => {
+        return response;
+    }, error => {
+
+      if (error.response.status === 401) {
+        const errorObject = {'Status': error.response.status, 'Data':error.response.data,'Headers': error.response.headers};
+        error=errorObject;
+        AuthService.logout();
+      }
+      return Promise.reject(error);
+    });
+
+
+   return axios.get(API_URL + 'MainCourses/GetMainCoursesWithDetailsFromUserName',
+                    {
+                        params: { UserName:userName }
+                    }
+   );
+
+
+  }
+
+  //Init only get, then you can use interceprot o try to put interceptor in common place to all calls
+  getMainCourses() {
+    return axios.get(API_URL + 'MainCourses', { headers: authHeader() });
+  }
+
+  //  "userEmail": "string",
+  //  "newClaimName": "string",
+  //  "newClaimValue": "string"
+
+  setCourseToUser(userName, courseClaimName, selectedCourseId) {
+    return axios.post(API_URL + 'Account/CreateClaimToUser',
+                      { headers: authHeader() },
+                      {
+                        params: { userEmail:userName, newClaimName: courseClaimName, newClaimValue: selectedCourseId}
+                      }
+
+    );
+  }
+
+  postCourseToUser(dto: CourseToUser) {
+    return axios.post(API_URL + 'Account/CreateClaimToUser', dto,
+                      { headers: authHeader() }
+    );
+  }
+
 }
 
 export default new UserService();

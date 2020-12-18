@@ -12,8 +12,12 @@ import Profile from "./components/profile.component";
 import BoardUser from "./components/board-user.component";
 import BoardModerator from "./components/board-moderator.component";
 import BoardAdmin from "./components/board-admin.component";
+import MainListCourses from "./components/main-list-courses.component";
+import RegisterCourse from "./components/register-course.component";
 
 import BoardTestUser from "./components/board-test-component";
+import jwt_decode from "jwt-decode";
+
 
 class App extends Component {
   constructor(props) {
@@ -31,10 +35,19 @@ class App extends Component {
     const user = AuthService.getCurrentUser();
 
     if (user) {
+      //decode jwt to read rol
+      var token = user.token;
+      var decoded = jwt_decode(token);
+
+      console.log(decoded);
+      let sMb=decoded.role?.includes("Moderator"); //check if need
+      let sAb=decoded.role?.includes("Admin");
+      console.log(sMb);console.log(sAb);
+
       this.setState({
         currentUser: user,
-        showModeratorBoard: true, //enablenTHENREADY user.roles.includes("ROLE_MODERATOR"),
-        showAdminBoard: true //enablenTHENREADY   user.roles.includes("ROLE_ADMIN"),
+        showModeratorBoard: sMb, //thendirectcall=Z decoded.role.includes("Moderator"); true, //enablenTHENREADY user.roles.includes("ROLE_MODERATOR"),
+        showAdminBoard: sAb //thendirectcall=Z decoded.role.includes("Admin");  true //enablenTHENREADY   user.roles.includes("ROLE_ADMIN"),
       });
     }
   }
@@ -50,7 +63,7 @@ class App extends Component {
       <div>
         <nav className="navbar navbar-expand navbar-dark bg-dark">
           <Link to={"/"} className="navbar-brand">
-            bezKoder
+            AMINO RELAXER
           </Link>
           <div className="navbar-nav mr-auto">
             <li className="nav-item">
@@ -76,7 +89,7 @@ class App extends Component {
             {showAdminBoard && (
               <li className="nav-item">
                 <Link to={"/admin"} className="nav-link">
-                  Admin Board
+                  Panel de administración
                 </Link>
               </li>
             )}
@@ -84,7 +97,7 @@ class App extends Component {
             {currentUser && (
               <li className="nav-item">
                 <Link to={"/user"} className="nav-link">
-                  User
+                  Mis Videos
                 </Link>
               </li>
             )}
@@ -99,7 +112,7 @@ class App extends Component {
               </li>
               <li className="nav-item">
                 <a href="/login" className="nav-link" onClick={this.logOut}>
-                  LogOut
+                  Salir
                 </a>
               </li>
             </div>
@@ -113,7 +126,7 @@ class App extends Component {
 
               <li className="nav-item">
                 <Link to={"/register"} className="nav-link">
-                  Sign Up
+                  Registro
                 </Link>
               </li>
             </div>
@@ -130,6 +143,8 @@ class App extends Component {
             <Route path="/mod" component={BoardModerator} />
             <Route path="/admin" component={BoardAdmin} />
             <Route path="/test" component={BoardTestUser} />
+            <Route exact path="/managecourses" component={MainListCourses} />
+            <Route exact path="/registernewcourse" component={RegisterCourse} />
           </Switch>
         </div>
       </div>

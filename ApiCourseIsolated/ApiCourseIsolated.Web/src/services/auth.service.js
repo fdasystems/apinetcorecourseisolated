@@ -1,8 +1,8 @@
 import axios from "axios";
 import customHeader from './custom-header';
 
-//const API_URL = "https://localhost:44394/api/";
-const API_URL = "http://apicourseisolated.azurewebsites.net/api/";
+const API_URL = "https://localhost:44394/api/";
+//const API_URL = "http://apicourseisolated.azurewebsites.net/api/";
 
 
 
@@ -26,10 +26,12 @@ class AuthService {
     localStorage.removeItem("user");
   }
 
-  register(username, email, password) {
-    return axios.post(API_URL + "signup", {
+  //register(username, email, password) {
+    register(email, password) {
+    let username = email;
+    return axios.post(API_URL + "Account/Create", {
       username,
-      email,
+      //email,
       password
     });
   }

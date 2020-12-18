@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
-import { isEmail } from "validator";
 
 import AuthService from "../services/auth.service";
 
@@ -16,11 +15,11 @@ const required = value => {
   }
 };
 
-const email = value => {
-  if (!isEmail(value)) {
+const numberValidation = value => {
+  if (isNaN(value)) {
     return (
       <div className="alert alert-danger" role="alert">
-        No ha ingresado un email válido.
+        El valor debe ser un numero.
       </div>
     );
   }
@@ -38,41 +37,24 @@ const vpassword = value => {
   }
 };
 
-export default class Register extends Component {
+export default class RegisterCourse extends Component {
   constructor(props) {
     super(props);
     this.handleRegister = this.handleRegister.bind(this);
-    //this.onChangeUsername = this.onChangeUsername.bind(this);
-    this.onChangeEmail = this.onChangeEmail.bind(this);
-    this.onChangePassword = this.onChangePassword.bind(this);
+    this.onChange = this.onChange.bind(this);
 
     this.state = {
-    //  username: "",
-      email: "",
-      password: "",
+      nameCourse: "",
+      levelRequired: "",
       successful: false,
       message: ""
     };
   }
 
-  /*
-  onChangeUsername(e) {
+  onChange(ev){
     this.setState({
-      username: e.target.value
-    });
-  }
-  */
-
-  onChangeEmail(e) {
-    this.setState({
-      email: e.target.value
-    });
-  }
-
-  onChangePassword(e) {
-    this.setState({
-      password: e.target.value
-    });
+        [ev.target.name]: ev.target.value
+    })
   }
 
   handleRegister(e) {
@@ -119,7 +101,7 @@ export default class Register extends Component {
       <div className="col-md-12">
         <div className="card card-container">
           <img
-            src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+            src="C:\Users\sq5403\Desktop\react-jwt-auth-master\react-jwt-auth-master\src\images\book.png"
             alt="profile-img"
             className="profile-img-card"
           />
@@ -133,31 +115,23 @@ export default class Register extends Component {
             {!this.state.successful && (
               <div>
                 <div className="form-group">
-                  <label htmlFor="email">Email</label>
-                  <Input
-                    type="text"
-                    className="form-control"
-                    name="email"
-                    value={this.state.email}
-                    onChange={this.onChangeEmail}
-                    validations={[required, email]}
-                  />
+                  <label htmlFor="nameCourse">Nombre del curso</label>
+                  <Input type="text"
+                  placeholder="nameCourse" value={this.state.nameCourse}
+                  onChange={this.onChange} name="nameCourse"
+                  validations={[required]} />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="password">Password</label>
-                  <Input
-                    type="password"
-                    className="form-control"
-                    name="password"
-                    value={this.state.password}
-                    onChange={this.onChangePassword}
-                    validations={[required, vpassword]}
-                  />
+                  <label htmlFor="levelRequired">Código de curso</label>
+                  <Input type="text"
+                  placeholder="levelRequired" value={this.state.levelRequired}
+                   onChange={this.onChange} name="levelRequired"
+                   validations={[required, numberValidation]}/>
                 </div>
 
                 <div className="form-group">
-                  <button className="btn btn-primary btn-block">Registrarse</button>
+                  <button className="btn btn-primary btn-block">Registrar Nuevo Curso</button>
                 </div>
               </div>
             )}
