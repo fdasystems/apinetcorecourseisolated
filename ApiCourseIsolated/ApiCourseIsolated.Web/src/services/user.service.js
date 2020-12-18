@@ -8,8 +8,8 @@ import CourseToUser from './types/CourseToUser.ts';
 //no iria... import ReactDOM from 'react-dom';
 
 
-const API_URL = 'https://localhost:44394/api/';
-//const API_URL = "http://apicourseisolated.azurewebsites.net/api/";
+//const API_URL = 'https://localhost:44394/api/';
+const API_URL = "http://apicourseisolated.azurewebsites.net/api/";
 
 class UserService {
   getPublicContent() {
