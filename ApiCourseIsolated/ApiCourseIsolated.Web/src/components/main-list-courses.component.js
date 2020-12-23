@@ -24,27 +24,6 @@ export default class MainListCourses extends Component {
     this.onChange = this.onChange.bind(this);
   }
 
-
- /* loadSimpleFromModalExample
-  const loadCourses = () =>{
-    setLoadingCourses(true);
-    CourseService
-      .getMainCourses()
-      .then(r => {
-        console.log(r);
-        setListCourses(r.data);
-        setLoadingCourses(false);
-        setLoadingSetVideoToCourse(false);
-      })
-      .catch(() =>{
-                    setLoadingCourses(false);
-                    notify('Carga de cursos de usuario', 'Errores al obtener datos', 'danger')
-                  });
-  }
-*/
-
-
-
   componentDidMount() {
     CourseService.getMainCourses().then(
       response => {

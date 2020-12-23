@@ -27,6 +27,7 @@ const ExpandMenuItem = (props) => {
         );
       } else {
         let menuItemdetails = Array.from(item.details)
+        .sort((a, b) => (a.order < b.order) ? 1 : -1)
         .map((item, i) => {
           //console.log('menuItemdetails.urlLink=>'+item.urlLink + '   ===>i: =>'+i);
           let menuItem = returnMenuItem(item, i);
@@ -42,7 +43,7 @@ const ExpandMenuItem = (props) => {
               className="details"
               toggler={`#toggle-menu-item-${item.id}`}
             >
-              {menuItemdetails.sort((a, b) => (a.id > b.id) ? 1 : -1)}
+              {menuItemdetails.sort((a, b) => (a.order < b.order) ? 1 : -1)}
             </UncontrolledCollapse>
           </div>
         );

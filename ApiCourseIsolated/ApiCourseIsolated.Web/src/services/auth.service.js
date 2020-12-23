@@ -1,9 +1,7 @@
 import axios from "axios";
 import customHeader from './custom-header';
 
-//const API_URL = "https://localhost:44394/api/";
-const API_URL = "http://apicourseisolated.azurewebsites.net/api/";
-
+const API_URL = process.env.REACT_APP_BACKEND_API;
 
 
 class AuthService {

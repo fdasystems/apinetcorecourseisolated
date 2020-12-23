@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, ChangeEvent } from 'react';
 import CourseService from  '../../services/course.service';
 import { Dropdown } from 'reactstrap';
-//import './modal-edit-user.css';
+import './modal-edit-course.css';
 import {CourseToUser} from '../../services/types/CourseToUser.ts';
 //'./../services/types/CourseToUser.ts';
 
@@ -20,12 +20,12 @@ export const ModalEditCourse = ({show, close, name, id, levelRequired}) =>
   const [listVideosInCourse, setListVideosInCourse] = useState([]);
   const [loadingCourses, setLoadingCourses] = useState(true);
   const [listCourses, setListCourses] = useState([]);
-  const [selectedCourseId, setSelectedCourseId] = useState(0);
-  const [loadingSetVideoToCourse, setLoadingSetVideoToCourse] = useState(true);
+  const [loadingDeleteVideoToCourse, setLoadingDeleteVideoToCourse] = useState(false);
+  const [loadingSetVideoToCourse, setLoadingSetVideoToCourse] = useState(false);
   const [selectSetVideoToCourse, setSelectSetVideoToCourse] = useState(false);
 
   const [urlLink, setUrlLink] = useState('');
-  const [order, setOrder] = useState(0);
+  const [order, setOrder] = useState();
   const [description, setDescription] = useState('');
 
 //then import context from azureass example notify AXIOS
@@ -41,7 +41,7 @@ export const ModalEditCourse = ({show, close, name, id, levelRequired}) =>
         .getSimpleDetailsFromMainCourse(id)
         .then(r => {
           console.log(r);
-          setListVideosInCourse(r.data[0].details); //r.data  ==> en realidad luego viene uno solo esta funcion es de ejemplo trae varias
+          setListVideosInCourse(r.data.details);
           setLoadingGrid(false);
         })
         .catch(() => {
@@ -89,7 +89,7 @@ export const ModalEditCourse = ({show, close, name, id, levelRequired}) =>
         };
         console.log(dto);
         CourseService
-            .postCourseToUser(dto)
+            .postVideoToCourse(dto)
             .then(r => {
               console.log(r);          //setListCoursesUser(r.data);
               setLoadingSetVideoToCourse(false);
@@ -107,7 +107,42 @@ export const ModalEditCourse = ({show, close, name, id, levelRequired}) =>
     }
   }
 
+  const deleteVideoToCourse = (id) => {
+    if (id>0)
+    {
+        //setSelectSetVideoToCourse(false);
+        setLoadingDeleteVideoToCourse(true);
+        /*const dto :  VideoToCourse = {
+          urlLink: urlLink,
+          order: order,
+          description: description,
+          mainCourseId: id
+        };*/
+        console.log('borrando del video id:',id);
+        // eslint-disable-next-line no-restricted-globals
+        let response = confirm('esta seguro que desea eliminar el video del curso?');
 
+        if (response)
+        {
+              CourseService
+                  .postDeleteVideoFromCourse(id)
+                  .then(r => {
+                    console.log(r);          //setListCoursesUser(r.data);
+                    setLoadingDeleteVideoToCourse(false);
+                    loadGrid();
+                  })
+                  .catch(() => { setLoadingDeleteVideoToCourse(false);
+                                notify('Carga de cursos de usuario', 'Errores al obtener datos', 'danger')
+                                });
+        }
+    }
+    else
+    {
+      //alert('Debe seleccionar un valor');
+      notify('Eliminación de video de curso', 'Debe seleccionar un valor', 'danger' )
+      setLoadingDeleteVideoToCourse(false);
+    }
+  }
 
   return (
   <div className="modal-wrapper"
@@ -138,8 +173,20 @@ export const ModalEditCourse = ({show, close, name, id, levelRequired}) =>
           <React.Fragment>
             <ul>
               {
-                  listVideosInCourse.map( item =>(
-                      <li key={item.id}> {item.order} : {item.urlLink} </li>
+                  listVideosInCourse.sort((a, b) => (a.order > b.order) ? 1 : -1).map( item =>(
+                      <li key={item.id}>
+                      <div>
+                        <table>
+                          <tbody>
+                        <tr><td>{item.order} : </td><td style={{width: "87%"}}>{item.urlLink} ({item.description})</td>
+                        <td>::></td>
+                        <td><button onClick={() => deleteVideoToCourse(item.id)} className="btn-remove"> :[X]: </button></td>
+                        <td></td>
+                        </tr>
+                        </tbody>
+                        </table>
+                      </div>
+                      </li>
                   ) )
               }
             </ul>
@@ -157,27 +204,29 @@ export const ModalEditCourse = ({show, close, name, id, levelRequired}) =>
         {!loadingGrid &&
           (
             <React.Fragment>
-
-              <input type="text" placeholder="urlLink" value={urlLink} onChange={handleChange} name="urlLink" />
-              <input type="text" placeholder="order" value={order} onChange={handleChange} name="order" />
-              <input type="text" placeholder="description" value={description} onChange={handleChange} name="description" />
+              <input key="1" type="text" placeholder="orden" value={order} onChange={handleChange} name="order" style={{width: "70px"}} />
+              <br />
+              <input key="2" type="text" placeholder="urlLink" value={urlLink} onChange={handleChange} name="urlLink" style={{width: "95%"}}/>
+              <br />
+              <input key="3" type="text" placeholder="descripción" value={description} onChange={handleChange} name="description" style={{width: "99%"}} />
+              <br />
+              <br />
 
               {selectSetVideoToCourse && (
                 <p>Debe seleccionar un orden y url para el video (la descripcion es opcional)</p>
               )}
 
-              <button onClick={() => setVideoToCourse()} className="btn-add"> ::Agregar video al curso [enviar asignación]:: </button>
-
+{!loadingSetVideoToCourse &&
+          (
+            <button onClick={() => setVideoToCourse()} className="btn-add"> ::Agregar video al curso [Enviar asignación]:: </button>
+          )
+        }
             </React.Fragment>
           )
         }
         <br />
         <br />
-        {!loadingSetVideoToCourse &&
-          (
-            <button onClick={() => setVideoToCourse()} className="btn-add"> ::Agregar video al curso [enviar asignación]:: </button>
-          )
-        }
+
       </div>
       <div className="modal-footer">
         <button onClick={close} className="btn-cancel">Cerrar</button>

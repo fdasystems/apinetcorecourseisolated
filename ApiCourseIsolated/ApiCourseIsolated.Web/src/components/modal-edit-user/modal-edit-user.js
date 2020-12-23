@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect, ChangeEvent } from 'react';
 import UserService from  '../../services/user.service';
+import CourseService from '../../services/course.service';
 import { Dropdown } from 'reactstrap';
 import './modal-edit-user.css';
 import {CourseToUser} from '../../services/types/CourseToUser.ts';
@@ -33,7 +34,7 @@ export const ModalEditUser = ({show, close, userName, Obs}) =>
   const loadGrid = () => {
     if (userName) {
       setLoadingGrid(true);
-      UserService
+      CourseService
         .getMainCoursesWithDetailsFromUserName(userName)
         .then(r => {
           console.log(r);
@@ -51,7 +52,7 @@ export const ModalEditUser = ({show, close, userName, Obs}) =>
 
   const loadCourses = () =>{
     setLoadingCourses(true);
-    UserService
+    CourseService
       .getMainCourses()
       .then(r => {
         console.log(r);

@@ -32,23 +32,32 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const user = AuthService.getCurrentUser();
 
-    if (user) {
-      //decode jwt to read rol
-      var token = user.token;
-      var decoded = jwt_decode(token);
+    try{
+      const user = AuthService.getCurrentUser();
 
-      console.log(decoded);
-      let sMb=decoded.role?.includes("Moderator"); //check if need
-      let sAb=decoded.role?.includes("Admin");
-      console.log(sMb);console.log(sAb);
+      if (user) {
+        //decode jwt to read rol
+        var token = user.token;
+        if (token)
+        {
+          var decoded = jwt_decode(token);
+          console.log(decoded);
+          let sMb=decoded.role?.includes("Moderator"); //check if need
+          let sAb=decoded.role?.includes("Admin");
+          console.log(sMb);console.log(sAb);
 
-      this.setState({
-        currentUser: user,
-        showModeratorBoard: sMb, //thendirectcall=Z decoded.role.includes("Moderator"); true, //enablenTHENREADY user.roles.includes("ROLE_MODERATOR"),
-        showAdminBoard: sAb //thendirectcall=Z decoded.role.includes("Admin");  true //enablenTHENREADY   user.roles.includes("ROLE_ADMIN"),
-      });
+          this.setState({
+            currentUser: user,
+            showModeratorBoard: sMb, //thendirectcall=Z decoded.role.includes("Moderator"); true, //enablenTHENREADY user.roles.includes("ROLE_MODERATOR"),
+            showAdminBoard: sAb //thendirectcall=Z decoded.role.includes("Admin");  true //enablenTHENREADY   user.roles.includes("ROLE_ADMIN"),
+          });
+        }
+
+      }
+    }  catch(error) {
+      // invalid token format
+      console.log(error);
     }
   }
 
@@ -69,12 +78,6 @@ class App extends Component {
             <li className="nav-item">
               <Link to={"/home"} className="nav-link">
                 Home
-              </Link>
-            </li>
-
-            <li className="nav-item">
-              <Link to={"/test"} className="nav-link">
-                test
               </Link>
             </li>
 

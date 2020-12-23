@@ -10,6 +10,7 @@ namespace ApiCourseIsolated.Entities
         [Required]
         public int Order { get; set; }
         public string Description { get; set; }
+        [Required]
         public int MainCourseId { get; set; }
         public MainCourse MainCourse { get; set; }
     }

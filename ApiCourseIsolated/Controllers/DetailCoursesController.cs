@@ -9,10 +9,12 @@ using ApiCourseIsolated.Entities.RequestDto;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using ApiCourseIsolated.Common;
+using ApiCourseIsolated.Entities.ResponseDto;
+using Microsoft.AspNetCore.Cors;
 
 namespace ApiCourseIsolated.Controllers
 {
-    [Route("api/[controller]")]
+    [EnableCors("MyPolicy"), Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class DetailCoursesController : ControllerBase
@@ -47,6 +49,27 @@ namespace ApiCourseIsolated.Controllers
             return Ok(detailCourse.UrlLink);
         }
 
+        // GET: api/GetLinksDetailCourseFromMain/5
+        [HttpGet("GetLinksDetailCourseFromMain/{id}")]
+        public async Task<ActionResult<DetailsCourseResponseDto>> GetLinksDetailCourseFromMain(int id)
+        {
+            var detailCourse = await _context.DetailCourse.Where(x => x.MainCourseId == id).ToListAsync();
+
+            if (detailCourse == null)
+            {
+                return NotFound();
+            }
+            DetailsCourseResponseDto result = new DetailsCourseResponseDto();
+            List<Details> urlLinkList = new List<Details>();
+            foreach (var item in detailCourse) 
+            {
+                Details detailItem = new Details() { UrlLink = item.UrlLink, Order = item.Order, Id=item.Id, Description=item.Description  };
+                urlLinkList.Add(detailItem);   
+            }
+            result.idMainCourse = id;
+            result.details = urlLinkList;
+            return Ok(result);
+        }
 
         // Post: api/GetLinkDefaultDetailCourseFromMain/1/5
         [HttpGet("GetLinkDetailCourseFromMainAndOrder")]

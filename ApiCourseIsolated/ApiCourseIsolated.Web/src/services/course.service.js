@@ -1,43 +1,44 @@
-import axios from 'axios';
-import authHeader from './auth-header';
-import AuthService from "./auth.service";
 import VideoToCourse from './types/VideoToCourse.ts';
-//no iria... import React from 'react';
-//no iria... import ReactDOM from 'react-dom';
+import ServiceBase from './serviceBase';
 
+const API_URL = process.env.REACT_APP_BACKEND_API;
 
-//const API_URL = 'https://localhost:44394/api/';
-const API_URL = "http://apicourseisolated.azurewebsites.net/api/";
+class CourseService extends ServiceBase {
 
-class CourseService {
-  //Init only get, then you can use interceprot o try to put interceptor in common place to all calls
   getMainCourses() {
-    return axios.get(API_URL + 'MainCourses', { headers: authHeader() });
+    return this.getSimple(API_URL + 'MainCourses');
   }
-
-  getSimpleDetailsFromMainCourse(id) {
-    return axios.get(API_URL + 'MainCourses/MainCoursesWithDetails', // id,
-                      { headers: authHeader() }
+  getSimpleDetailsFromMainCourse(id)
+  {
+    return this.getSimple(API_URL + `DetailCourses/GetLinksDetailCourseFromMain/${id}`);
+  }
+  getMainCoursesWithDetailsFromUserName(userName) {
+    return this.getWithParams(API_URL + 'MainCourses/GetMainCoursesWithDetailsFromUserName',
+                  {
+                      params: { UserName:userName }
+                  }
     );
   }
-
   postVideoToCourse(dto: VideoToCourse) {
-    return axios.post(API_URL + 'DetailCourses/CreateDetailCourse', dto,
-                      { headers: authHeader() }
-    );
+    return this.postWithBody(API_URL + 'DetailCourses', dto);
   }
 
   registerCourse(name, levelRequired) {
     //TODO: then create dto Object
-    return axios.post(API_URL + "MainCourses",
+    return this.postWithBody(API_URL + "MainCourses",
                       {
                         name,
                         levelRequired
-                      },
-                      { headers: authHeader() }
-    );
+                      })
   }
 
+  postDeleteVideoFromCourse(id) {
+    return this.deleteSimple(API_URL + `DetailCourses/${id}`);
+  }
+
+  postDeleteCourse(id) {
+    return this.deleteSimple(API_URL + `MainCourses/${id}`);
+  }
 }
 
 export default new CourseService();
