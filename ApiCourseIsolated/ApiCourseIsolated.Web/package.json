@@ -1,0 +1,56 @@
+{
+  "name": "react-jwt-auth",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "@types/jest": "^26.0.19",
+    "@types/node": "^14.14.14",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "axios": "^0.19.2",
+    "bootstrap": "^4.5.3",
+    "jwt-decode": "^3.1.2",
+    "react": "^16.14.0",
+    "react-bootstrap-validation": "^0.1.11",
+    "react-dom": "^16.14.0",
+    "react-player": "^2.7.0",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.4.0",
+    "react-validation": "^3.0.7",
+    "reactstrap": "^8.7.1",
+    "styled-components": "^5.2.1",
+    "typescript": "^4.1.3",
+    "validator": "^12.2.0"
+  },
+  "proxy": "http://apicourseisolated.azurewebsites.net/",
+  "homepage": "http://www.tecapacitacionescursos.com.ar/",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "build:local": "env-cmd -f .env.development.local npm run build",
+    "build:prod": "env-cmd -f .env.prod npm run build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "env-cmd": "^10.1.0"
+  }
+}

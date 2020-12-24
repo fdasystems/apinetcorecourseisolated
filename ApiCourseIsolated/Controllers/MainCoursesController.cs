@@ -8,10 +8,11 @@ using ApiCourseIsolated.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using ApiCourseIsolated.Common;
+using Microsoft.AspNetCore.Cors;
 
 namespace ApiCourseIsolated.Controllers
 {
-    [Route("api/[controller]")]
+    [EnableCors("MyPolicy"), Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class MainCoursesController : ControllerBase
@@ -35,7 +36,7 @@ namespace ApiCourseIsolated.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MainCourse>>> GetMainCoursesWithDetails()
         {
-            return await _context.MainCourse.Include(x=> x.Details).ToListAsync();
+            return await _context.MainCourse.Include(x => x.Details).ToListAsync();
         }
 
         [Route("GetMyMainCoursesWithDetails")]
@@ -43,9 +44,23 @@ namespace ApiCourseIsolated.Controllers
         public async Task<ActionResult<IEnumerable<MainCourse>>> GetMyMainCoursesWithDetails()
         {
             string claimName = Constants.CourseClaimName;
-            int userLevel = int.Parse(this.User.Claims.Where(x => x.Type == claimName).FirstOrDefault().Value);
-            return await _context.MainCourse.Include(x => x.Details).Where(o=> o.LevelRequired==userLevel).ToListAsync();
+            int[] userLevels = this.User.Claims.Where(x => x.Type == claimName).Select(x => int.Parse(x.Value)).ToArray(); //.ToArray().ToList();
+            var result = await _context.MainCourse.Include(x => x.Details).Where(o => userLevels.Contains(o.LevelRequired)).OrderBy(z => z.Id).ToListAsync();
+            return result;
         }
+
+        [Route("GetMainCoursesWithDetailsFromUserName")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<MainCourse>>> GetMainCoursesWithDetailsFromUserName(string UserName)
+        {
+            string claimName = Constants.CourseClaimName;
+            var user = await _context.Users.Where(x => x.UserName == UserName).FirstOrDefaultAsync();
+            int[] userLevels = await _context.UserClaims.Where(y => y.UserId == user.Id && y.ClaimType == claimName).Select(x => int.Parse(x.ClaimValue)).ToArrayAsync();
+            var result = await _context.MainCourse.Include(x => x.Details).Where(o => userLevels.Contains(o.LevelRequired)).OrderBy(z => z.Id).ToListAsync();
+            return result;
+        }
+
+
 
         // GET: api/MainCourses/5
         [HttpGet("{id}")]

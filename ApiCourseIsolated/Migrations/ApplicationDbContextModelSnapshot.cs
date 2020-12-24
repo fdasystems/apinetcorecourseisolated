@@ -126,6 +126,9 @@ namespace ApiCourseIsolated.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LevelRequired")
+                        .IsUnique();
+
                     b.HasIndex("Name")
                         .IsUnique();
 

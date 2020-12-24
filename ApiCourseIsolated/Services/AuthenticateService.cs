@@ -1,7 +1,9 @@
 ﻿using ApiCourseIsolated.Entities;
 using ApiCourseIsolated.Entities.RequestDto;
+using ApiCourseIsolated.Entities.ResponseDto;
 using ApiCourseIsolated.Services.Contracts;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -18,16 +20,19 @@ namespace ApiCourseIsolated.Services
     {
         private readonly SignInManager<CustomUser> _signInManager;
         private readonly UserManager<CustomUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
 
         public AuthenticateService(
                                     SignInManager<CustomUser> signInManager,
                                     UserManager<CustomUser> userManager,
+                                    RoleManager<IdentityRole> roleManager,
                                     IConfiguration configuration
                                   )
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _roleManager = roleManager;
             this._configuration = configuration;
         }
         #region private_methods
@@ -111,8 +116,10 @@ namespace ApiCourseIsolated.Services
             return tokenFinal;
         }
 
-        public async Task<string> CreateUserAsync(UserRequestDto userRequest)
+        public async Task<UserDataResultResponseDto> CreateUserAsync(UserRequestDto userRequest)
         {
+            UserDataResultResponseDto response = new UserDataResultResponseDto();
+            List<string> errorList = new List<string>();
             var user = new CustomUser
             {
                 UserName = userRequest.userName,
@@ -122,10 +129,20 @@ namespace ApiCourseIsolated.Services
             var result = await _userManager.CreateAsync(user, userRequest.password);
             if (result.Succeeded)
             {
-                return await BuildTokenAsync(user);
+                response.Token =await BuildTokenAsync(user);
+                return response;
             }
 
-            return null;
+            //verify how read error
+            foreach(IdentityError error in result.Errors) 
+            {
+                //to ModelState
+                errorList.Add(error.Description);
+            }
+
+            response.ErrorList = errorList;
+
+            return response;
         }
 
         public async Task<bool> CreateClaimToUserAsync(ClaimToUserRequestDto claimToUserRequestDtoRequest)
@@ -140,6 +157,37 @@ namespace ApiCourseIsolated.Services
             }
 
             return false;
+        }
+
+        
+        public async Task<bool> CreateRolAsync(CreateRolRequestDto rolRequest)
+        {
+            IdentityRole identityRole = new IdentityRole { Name = rolRequest.RoleName };
+            IdentityResult result = await _roleManager.CreateAsync(identityRole);
+            return result.Succeeded;
+        }
+
+        public async Task<bool> AssignRolToUserAsync(AssignRolToUserRequestDto rolUserRequest)
+        {
+            bool response= false;
+            
+            var user = await _userManager.FindByNameAsync(rolUserRequest.UserName);
+
+            if (user != null)
+            {
+                IdentityResult result = await _userManager.AddToRoleAsync(user, rolUserRequest.RoleName);
+                response = result.Succeeded;
+            }
+            
+            return response;
+        }
+
+        public async Task<List<DetailUsersDataResponseDto>> GetAllUsersAsync()
+        {
+            return await  _userManager.Users.Select(g => new DetailUsersDataResponseDto() { 
+                     UserName=g.UserName,
+                     Obs=g.Obs
+            }).ToListAsync();
         }
         #endregion
     }

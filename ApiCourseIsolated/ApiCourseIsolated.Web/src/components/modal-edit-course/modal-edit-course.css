@@ -1,0 +1,10 @@
+.btn-add{
+  background: #3daa0aea;
+  color: #eee;
+}
+
+.btn-remove{
+  background: #a80a0aea;
+  color: #eee;
+  font-size: smaller;
+}

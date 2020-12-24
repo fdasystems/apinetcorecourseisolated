@@ -31,6 +31,10 @@ namespace ApiCourseIsolated.Data
             .HasIndex(u => u.Name)
             .IsUnique();
 
+            modelBuilder.Entity<MainCourse>()
+            .HasIndex(u => u.LevelRequired)
+            .IsUnique();
+
             modelBuilder.Entity<DetailCourse>()
             .HasIndex(u => new { u.MainCourseId, u.Order })
             .IsUnique();
