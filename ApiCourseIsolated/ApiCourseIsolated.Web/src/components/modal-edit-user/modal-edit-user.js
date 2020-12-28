@@ -113,6 +113,34 @@ export const ModalEditUser = ({show, close, userName, Obs}) =>
     }
   }
 
+  const deleteCourseToUser = (id) => {
+    if (id>0)
+    {
+        setSelectSetCourseToUser(false);
+        setLoadingSetCourseToUser(true);
+        const dto :  CourseToUser = {
+          userEmail: userName,
+          newClaimName: courseClaimName,
+          newClaimValue: id
+        };
+        UserService
+            .deleteCourseToUser(dto)
+            .then(r => {
+              console.log(r);          //setListCoursesUser(r.data);
+              setLoadingSetCourseToUser(false);
+              loadGrid();
+            })
+            .catch(() => { setLoadingSetCourseToUser(false);
+                          notify('Eliminación de curso a usuario', 'Errores al obtener datos', 'danger')
+                          });
+    }
+    else
+    {
+      //alert('Debe seleccionar un valor');
+      notify('Eliminación de curso a usuario', 'Debe seleccionar un valor', 'danger' )
+      setSelectSetCourseToUser(true);
+    }
+  }
 
 
   return (
@@ -145,7 +173,19 @@ export const ModalEditUser = ({show, close, userName, Obs}) =>
             <ul>
               {
                   listCoursesUser.map( item =>(
-                      <li key={item.id}> {item.name} </li>
+                      <li key={item.id}>
+                      <div>
+                      <table>
+                        <tbody>
+                      <tr><td></td><td style={{width: "87%"}}>{item.name}</td>
+                      <td>::></td>
+                      <td><button onClick={() => deleteCourseToUser(item.id)} className="btn-remove"> :[X]: </button></td>
+                      <td></td>
+                      </tr>
+                      </tbody>
+                      </table>
+                    </div>
+                    </li>
                   ) )
               }
             </ul>

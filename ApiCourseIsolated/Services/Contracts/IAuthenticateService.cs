@@ -14,5 +14,6 @@ namespace ApiCourseIsolated.Services.Contracts
         public Task<bool> CreateRolAsync(CreateRolRequestDto roleName);
         public Task<bool> AssignRolToUserAsync(AssignRolToUserRequestDto rolUserRequest);
         public Task<List<DetailUsersDataResponseDto>> GetAllUsersAsync();
+        public Task<bool> DeleteClaimToUserAsync(ClaimToUserRequestDto claimToUserRequestDtoRequest);
     }
 }

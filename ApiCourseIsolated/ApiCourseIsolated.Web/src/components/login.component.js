@@ -44,7 +44,7 @@ export default class Login extends Component {
 
   handleLogin(e) {
     e.preventDefault();
-
+    AuthService.logout();//delete previous sign-in
     this.setState({
       message: "",
       loading: true

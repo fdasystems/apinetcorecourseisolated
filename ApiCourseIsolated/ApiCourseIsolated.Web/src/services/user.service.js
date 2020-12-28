@@ -22,6 +22,18 @@ class UserService extends ServiceBase {
   postCourseToUser(dto: CourseToUser) {
     return this.postWithBody(API_URL + 'Account/CreateClaimToUser', dto);
   }
+
+  /*deleteCourseToUser(dto: CourseToUser) {
+    let idCourse = dto.newClaimValue;
+    let UserName = dto.userEmail;
+    return this.deleteSimple(API_URL + `Account/DeleteClaimToUser/${idCourse}/${UserName}`);
+  }*/
+
+  deleteCourseToUser(dto: CourseToUser) {
+    return this.deleteWithBody(API_URL + 'Account/DeleteClaimToUser', dto);
+  }
+
+
 }
 
 export default new UserService();

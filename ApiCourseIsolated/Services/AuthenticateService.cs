@@ -159,6 +159,19 @@ namespace ApiCourseIsolated.Services
             return false;
         }
 
+        public async Task<bool> DeleteClaimToUserAsync(ClaimToUserRequestDto claimToUserRequestDtoRequest)
+        {
+            var user = await _userManager.FindByEmailAsync(claimToUserRequestDtoRequest.UserEmail);
+
+            if (user != null)
+            {
+                Claim claim = new Claim(claimToUserRequestDtoRequest.NewClaimName, claimToUserRequestDtoRequest.NewClaimValue);
+                var result = await _userManager.RemoveClaimAsync(user, claim);
+                return result.Succeeded;
+            }
+
+            return false;
+        }
         
         public async Task<bool> CreateRolAsync(CreateRolRequestDto rolRequest)
         {
