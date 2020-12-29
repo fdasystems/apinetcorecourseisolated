@@ -171,25 +171,30 @@ export const ModalEditCourse = ({show, close, name, id, levelRequired}) =>
 
         {!loadingGrid && (
           <React.Fragment>
-            <ul>
-              {
-                  listVideosInCourse.sort((a, b) => (a.order > b.order) ? 1 : -1).map( item =>(
-                      <li key={item.id}>
-                      <div>
-                        <table>
-                          <tbody>
-                        <tr><td>{item.order} : </td><td style={{width: "87%"}}>{item.urlLink} ({item.description})</td>
-                        <td>::></td>
-                        <td><button onClick={() => deleteVideoToCourse(item.id)} className="btn-remove"> :[X]: </button></td>
-                        <td></td>
-                        </tr>
-                        </tbody>
-                        </table>
-                      </div>
-                      </li>
-                  ) )
-              }
-            </ul>
+            <div className="row" style={{width: "100%"}}>
+              <div  style={{width: "99%"}} >
+                <ul className="list-group">
+                  {
+                      listVideosInCourse.sort((a, b) => (a.order > b.order) ? 1 : -1).map( item =>(
+                          <li key={item.id} className="list-group-item" style={{width: "98%"}}>
+                          <div className="col-md-5">
+                            <table>
+                              <tbody>
+                            <tr><td style={{width: "7%"}}>{item.order} : </td><td style={{width: "62%"}}>{item.urlLink}</td>
+                            <td style={{width: "20%"}} >&nbsp;({item.description})&nbsp;</td>
+                            <td style={{width: "5%"}} >&nbsp;::></td>
+                            <td style={{width: "6%"}}><button onClick={() => deleteVideoToCourse(item.id)} className="btn-remove"> :[X]: </button></td>
+
+                            </tr>
+                            </tbody>
+                            </table>
+                          </div>
+                          </li>
+                      ) )
+                  }
+                </ul>
+              </div>
+            </div>
           </React.Fragment>
         )}
 

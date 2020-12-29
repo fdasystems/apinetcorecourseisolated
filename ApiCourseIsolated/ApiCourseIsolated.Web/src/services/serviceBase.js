@@ -63,6 +63,24 @@ export default class ServiceBase {
         this.redirectOnError(error);
       }
   };
+/*axios.delete(URL, {
+  headers: {
+    Authorization: authorizationToken
+  },
+  data: {
+    source: source
+  }
+});*/
+
+ deleteWithBody = async (url: string, dataToDelete?: any) => {
+    try {
+          const result = await axios.delete(url, { data: dataToDelete });
+          this.redirectOnLogout(result);
+          return result;
+      } catch (error) {
+        this.redirectOnError(error);
+      }
+  };
 
   get = async <P>(url: string) => {
     //const result = await axios.get<P>(url, this.config);

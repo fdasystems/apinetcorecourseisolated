@@ -121,6 +121,47 @@ namespace ApiCourseIsolated.Controllers
             return BadRequest(ModelState);
         }
 
+        [Route("DeleteClaimToUser")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteClaimToUser(ClaimToUserRequestDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                bool result = await _authenticateService.DeleteClaimToUserAsync(model);
+
+                if (result)
+                {
+                    return Ok(result);    
+                }
+
+                _fullErrorList = "Falló al intentar eliminar atributo al usuario";
+                ModelState.AddModelError("message", _fullErrorList);
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [Route("DeleteClaimToUserWithParams")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteClaimToUserWithParams(string newClaimName, string newClaimValue,string userEmail)
+        {
+            ClaimToUserRequestDto model = new ClaimToUserRequestDto() { NewClaimName=newClaimName, NewClaimValue=newClaimValue, UserEmail=userEmail };
+
+            if (ModelState.IsValid)
+            {
+                bool result = await _authenticateService.DeleteClaimToUserAsync(model);
+
+                if (result)
+                {
+                    return Ok(result);    
+                }
+
+                _fullErrorList = "Falló al intentar eliminar atributo al usuario";
+                ModelState.AddModelError("message", _fullErrorList);
+            }
+
+            return BadRequest(ModelState);
+        }
         [Route("CreateRol")]
         [HttpPost]
         public async Task<IActionResult> CreateRol(CreateRolRequestDto model)
