@@ -1,9 +1,11 @@
 import React, { useState, useContext, useEffect, ChangeEvent } from 'react';
 import CourseService from  '../../services/course.service';
-import { Dropdown } from 'reactstrap';
+import { Container, Dropdown, Row, Col, Card, CardImg, CardBody, CardTitle, CardSubtitle, CardText, Badge, Button } from 'reactstrap';
+//import {Row, Col } from 'react-boostrap';
 import './modal-edit-course.css';
 import {CourseToUser} from '../../services/types/CourseToUser.ts';
 //'./../services/types/CourseToUser.ts';
+import { CardListCustom } from '../common/CardListCustom';
 
 /* Then can be moved to interface.course.ts
 interface Course {
@@ -25,7 +27,7 @@ export const ModalEditCourse = ({show, close, name, id, levelRequired}) =>
   const [selectSetVideoToCourse, setSelectSetVideoToCourse] = useState(false);
 
   const [urlLink, setUrlLink] = useState('');
-  const [order, setOrder] = useState();
+  const [order, setOrder] = useState(0);
   const [description, setDescription] = useState('');
 
 //then import context from azureass example notify AXIOS
@@ -120,21 +122,18 @@ export const ModalEditCourse = ({show, close, name, id, levelRequired}) =>
         };*/
         console.log('borrando del video id:',id);
         // eslint-disable-next-line no-restricted-globals
-        let response = confirm('esta seguro que desea eliminar el video del curso?');
 
-        if (response)
-        {
-              CourseService
-                  .postDeleteVideoFromCourse(id)
-                  .then(r => {
-                    console.log(r);          //setListCoursesUser(r.data);
-                    setLoadingDeleteVideoToCourse(false);
-                    loadGrid();
-                  })
-                  .catch(() => { setLoadingDeleteVideoToCourse(false);
-                                notify('Carga de cursos de usuario', 'Errores al obtener datos', 'danger')
-                                });
-        }
+        CourseService
+            .postDeleteVideoFromCourse(id)
+            .then(r => {
+              console.log(r);          //setListCoursesUser(r.data);
+              setLoadingDeleteVideoToCourse(false);
+              loadGrid();
+            })
+            .catch(() => { setLoadingDeleteVideoToCourse(false);
+                          notify('Carga de cursos de usuario', 'Errores al obtener datos', 'danger')
+                          });
+
     }
     else
     {
@@ -144,7 +143,7 @@ export const ModalEditCourse = ({show, close, name, id, levelRequired}) =>
     }
   }
 
-  return (
+ return (
   <div className="modal-wrapper"
        style={{
           transform: show ? 'translate(0vh)': 'translate(-100vh)',
@@ -171,30 +170,25 @@ export const ModalEditCourse = ({show, close, name, id, levelRequired}) =>
 
         {!loadingGrid && (
           <React.Fragment>
-            <div className="row" style={{width: "100%"}}>
-              <div  style={{width: "99%"}} >
-                <ul className="list-group">
-                  {
-                      listVideosInCourse.sort((a, b) => (a.order > b.order) ? 1 : -1).map( item =>(
-                          <li key={item.id} className="list-group-item" style={{width: "98%"}}>
-                          <div className="col-md-5">
-                            <table>
-                              <tbody>
-                            <tr><td style={{width: "7%"}}>{item.order} : </td><td style={{width: "62%"}}>{item.urlLink}</td>
-                            <td style={{width: "20%"}} >&nbsp;({item.description})&nbsp;</td>
-                            <td style={{width: "5%"}} >&nbsp;::></td>
-                            <td style={{width: "6%"}}><button onClick={() => deleteVideoToCourse(item.id)} className="btn-remove"> :[X]: </button></td>
-
-                            </tr>
-                            </tbody>
-                            </table>
-                          </div>
-                          </li>
-                      ) )
-                  }
-                </ul>
-              </div>
-            </div>
+            <Container>
+              <Row>
+                <Col>
+                    {
+                        listVideosInCourse.sort((a, b) => (a.order > b.order) ? 1 : -1).map( item =>(
+                            <CardListCustom key={item.id}
+                                            itemId={item.id}
+                                            itemCardTitle={`Orden #${item.order}`}
+                                            itemCardSubtitle={item.urlLink}
+                                            itemCardText={item.description}
+                                            deleteFunction={() => deleteVideoToCourse(item.id)}
+                                            itemDeleteText="::[X] Eliminar video::"
+                                            >
+                            </CardListCustom>
+                        ) )
+                    }
+                </Col>
+              </Row>
+            </Container>
           </React.Fragment>
         )}
 
@@ -209,11 +203,11 @@ export const ModalEditCourse = ({show, close, name, id, levelRequired}) =>
         {!loadingGrid &&
           (
             <React.Fragment>
-              <input key="1" type="text" placeholder="orden" value={order} onChange={handleChange} name="order" style={{width: "70px"}} />
+              <input key={1} type="text" placeholder="orden" value={order} onChange={handleChange} name="order" style={{width: "70px"}} />
               <br />
-              <input key="2" type="text" placeholder="urlLink" value={urlLink} onChange={handleChange} name="urlLink" style={{width: "95%"}}/>
+              <input key={2} type="text" placeholder="urlLink" value={urlLink} onChange={handleChange} name="urlLink" style={{width: "95%"}}/>
               <br />
-              <input key="3" type="text" placeholder="descripción" value={description} onChange={handleChange} name="description" style={{width: "99%"}} />
+              <input key={3} type="text" placeholder="descripción" value={description} onChange={handleChange} name="description" style={{width: "99%"}} />
               <br />
               <br />
 

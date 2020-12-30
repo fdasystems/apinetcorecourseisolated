@@ -16,3 +16,21 @@
   font-weight: bold;
   text-emphasis-color: red;
 }
+
+
+.modal-footer button {
+  display: block;
+  font-size: 1rem;
+  margin-left: initial;
+  padding: 0.3rem 1.5rem;
+  background: #dd501d;
+  color: #fff;
+  border:none;
+  outline: none;
+  cursor: pointer;
+}
+
+.modal-footer span {
+  display: block;
+  margin-left: auto;
+}
