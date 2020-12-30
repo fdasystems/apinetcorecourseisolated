@@ -5,6 +5,7 @@ import { Dropdown } from 'reactstrap';
 import './modal-edit-user.css';
 import {CourseToUser} from '../../services/types/CourseToUser.ts';
 //'./../services/types/CourseToUser.ts';
+import { CardListCustom } from '../common/CardListCustom';
 
 /* Then can be moved to interface.course.ts
 interface Course {
@@ -173,19 +174,17 @@ export const ModalEditUser = ({show, close, userName, Obs}) =>
             <ul>
               {
                   listCoursesUser.map( item =>(
-                      <li key={item.id}>
-                      <div>
-                      <table>
-                        <tbody>
-                      <tr><td></td><td style={{width: "87%"}}>{item.name}</td>
-                      <td>::></td>
-                      <td><button onClick={() => deleteCourseToUser(item.id)} className="btn-remove"> :[X]: </button></td>
-                      <td></td>
-                      </tr>
-                      </tbody>
-                      </table>
-                    </div>
-                    </li>
+
+                    <CardListCustom
+                      key={item.id}
+                      itemId={item.levelRequired}
+                      itemCardTitle=""
+                      itemCardSubtitle=""
+                      itemCardText={item.name}
+                      deleteFunction={() => deleteCourseToUser(item.levelRequired)}
+                      itemDeleteText="::[X] Eliminar curso del usuario::"
+                      >
+                    </CardListCustom>
                   ) )
               }
             </ul>
@@ -207,7 +206,7 @@ export const ModalEditUser = ({show, close, userName, Obs}) =>
                 <option key="0" value="0" >Seleccionar Curso</option>
                 {
                     listCourses.map( item =>(
-                        <option key={item.id} value={item.id} > {item.name} </option>
+                        <option key={item.id} value={item.levelRequired} > {item.name} </option>
                     ) )
                 }
               </select>

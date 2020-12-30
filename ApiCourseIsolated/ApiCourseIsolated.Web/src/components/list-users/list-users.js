@@ -8,6 +8,7 @@
 import  { useState } from "react";
 import * as React from 'react';
 import {ModalEditUser} from './../modal-edit-user/modal-edit-user';
+import { CardListCustom } from '../common/CardListCustom';
 
 const ListUsers = props => {
   const [shownComments, setShownComments] = useState({});
@@ -19,19 +20,51 @@ const ListUsers = props => {
     }));
   };
 
-  //const closeModalHandler = (i) => toggleComment(i);   //call close={closeModalHandler(i)}
-  //call back-drop //Puede haber lio con el tactil si lo agrego\\ onClick={() => toggleComment(i)}
+  const deleteUser = (id) => {
+    console.log(id);
+    /*
+        setSelectSetCourseToUser(false);
+        setLoadingSetCourseToUser(true);
+        const dto :  CourseToUser = {
+          userEmail: userName,
+          newClaimName: courseClaimName,
+          newClaimValue: id
+        };
+        UserService
+            .deleteCourseToUser(dto)
+            .then(r => {
+              console.log(r);          //setListCoursesUser(r.data);
+              setLoadingSetCourseToUser(false);
+              loadGrid();
+            })
+            .catch(() => { setLoadingSetCourseToUser(false);
+                          notify('Eliminación de curso a usuario', 'Errores al obtener datos', 'danger')
+                          });
+                          */
+
+  }
 
   return (
     <>
       {Array.from(props.items).map((obj,i) => (
         // eslint-disable-next-line react/react-in-jsx-scope
+
         <div key={i}>
           {shownComments[i] ?<div className="back-drop"> </div> : null}
 
           {obj.userName ? (
             // eslint-disable-next-line react/react-in-jsx-scope
-            <button onClick={() => toggleComment(i)}>{obj.userName}</button>
+            <button onClick={() => toggleComment(i)}>
+                      <CardListCustom key={i}
+                              itemId={i}
+                              itemCardTitle={`Usuario`}
+                              itemCardSubtitle={obj.userName}
+                              itemCardText={obj.Obs}
+                              deleteFunction={() => deleteUser(obj.userName)}
+                              itemDeleteText="::[X] Eliminar usuario::"
+                              >
+                      </CardListCustom>
+              </button>
 
           ) : null}
 

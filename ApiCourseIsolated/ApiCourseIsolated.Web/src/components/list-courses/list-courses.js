@@ -10,6 +10,7 @@ import * as React from 'react';
 import {ModalEditCourse} from './../modal-edit-course/modal-edit-course';
 import CourseService from  '../../services/course.service';
 import { Redirect } from 'react-router';
+import { CardListCustom } from '../common/CardListCustom';
 
 const ListCourses = props => {
   const [shownComments, setShownComments] = useState({});
@@ -61,11 +62,29 @@ const ListCourses = props => {
       {Array.from(props.items).map((obj,i) => (
         // eslint-disable-next-line react/react-in-jsx-scope
         <div key={i}>
-          {shownComments[i] ?<div className="back-drop">  </div> : <button onClick={() => deleteCourse(obj.id)} className="btn-remove"> :[X]: </button>}
+          {shownComments[i] ?<div className="back-drop">  </div> : null}
 
           {obj.name ? (
             // eslint-disable-next-line react/react-in-jsx-scope
-            <button onClick={() => toggleComment(i)}>{obj.name}</button>
+            <div>
+              <table>
+                <thead><button className="btn-secondary" onClick={() => toggleComment(i)}>
+                Editar información de curso
+              </button></thead>
+                <tbody><tr><td><CardListCustom
+              key={i}
+              itemId={i}
+              itemCardTitle={`Curso`}
+              itemCardSubtitle={obj.name}
+              itemCardText={obj.levelRequired}
+              deleteFunction={() => deleteCourse(obj.id)}
+              itemDeleteText="::[X] Eliminar Curso::"
+              >
+              </CardListCustom></td></tr></tbody>
+              </table>
+
+
+            </div>
 
           ) : null}
 
