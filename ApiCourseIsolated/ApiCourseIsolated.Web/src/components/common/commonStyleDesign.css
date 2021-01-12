@@ -4,17 +4,17 @@
 }
 
 .btn-remove{
-  background: #a80a0aea;
-  color: #eee;
-  font-size: smaller;
+  background: #460000;
+  color: rgb(240, 148, 148);
+  font-size:large;
 }
 
 .btn-remove-out{
   background: #e40505f5;
-  color: rgba(238, 104, 14, 0.767);
-  font-size: smaller;
+  color: rgba(255, 140, 140, 0.767);
+  font-size: large;
   font-weight: bold;
-  text-emphasis-color: red;
+  text-emphasis-color: #560101;
 }
 
 
@@ -23,7 +23,7 @@
   font-size: 1rem;
   margin-left: initial;
   padding: 0.3rem 1.5rem;
-  background: #dd501d;
+  background: #6b1e02;
   color: #fff;
   border:none;
   outline: none;
@@ -33,4 +33,8 @@
 .modal-footer span {
   display: block;
   margin-left: auto;
+}
+
+.body{
+  text-align: -webkit-center;
 }

@@ -2,7 +2,7 @@
   background: #3daa0aea;
   color: #eee;
 }
-
+/*
 .btn-remove{
   background: #a80a0aea;
   color: #eee;
@@ -11,8 +11,9 @@
 
 .btn-remove-out{
   background: #e40505f5;
-  color: rgba(238, 104, 14, 0.767);
+  color: rgba(1, 29, 6, 0.884);
   font-size: smaller;
   font-weight: bold;
-  text-emphasis-color: red;
+  text-emphasis-color: rgb(253, 57, 57);
 }
+*/

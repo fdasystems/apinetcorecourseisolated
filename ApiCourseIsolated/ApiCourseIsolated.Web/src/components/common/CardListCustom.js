@@ -1,13 +1,11 @@
 import { type } from 'os';
 import React, { useState } from 'react';
 import { Container, Dropdown, Row, Col, Card, CardImg, CardBody, CardTitle, CardSubtitle,
-        CardText, Badge, Button, Modal, ModalHeader, ModalBody, ModalFooter, Label } from 'reactstrap';
+        CardText, Badge, Button, Modal, ModalHeader, ModalBody, ModalFooter, Label, CardFooter } from 'reactstrap';
 import './commonStyleDesign.css';
-//import '../../../node_modules/noty'
-import Noty from 'noty';
 import "../../../node_modules/noty/lib/themes/bootstrap-v4.css";
 
-export const CardListCustom = ({itemId, itemCardTitle, itemCardSubtitle, itemCardText, deleteFunction, itemDeleteText}) =>
+export const CardListCustom = ({itemId, itemCardTitle, itemCardSubtitle, itemCardText, deleteFunction, itemDeleteText, itemCardFooter}) =>
 {
   const [shownHoverList, setShownHoverList] = useState({});
   const toggleHoverList = id => {
@@ -31,7 +29,10 @@ export const CardListCustom = ({itemId, itemCardTitle, itemCardSubtitle, itemCar
   };
 
 
-
+  const expandFunction = id => {
+    console.log('but2 click', id);
+    itemCardFooter(id);
+  };
 
 
 
@@ -39,18 +40,28 @@ export const CardListCustom = ({itemId, itemCardTitle, itemCardSubtitle, itemCar
   return (
     <>
      <Card key={itemId} body outline color={shownHoverList[itemId] ? "danger": "success"} className="mx-auto my-2">
-          <CardBody>
+          <CardBody className="btn btn-success">
             <CardTitle>{itemCardTitle}</CardTitle>
             <CardSubtitle>{itemCardSubtitle}</CardSubtitle>
             <CardText>{itemCardText}</CardText>
-            <Badge color='warning' className='btn-danger'>
+
+
+            <Badge color='danger' className='btn-danger'>
               <Button key={itemId} onClick={toggle}
                 className={shownHoverList[itemId] ?  'btn-remove-out' : 'btn-remove'}
                 onMouseEnter={() => toggleHoverList(itemId)}
                 onMouseLeave={() => toggleHoverList(itemId)}>{itemDeleteText}
               </Button>
             </Badge>
+
           </CardBody>
+          {itemCardFooter && (
+          <CardFooter>
+             <Button className="info" onClick={() => expandFunction(itemId)}>Expandir información/Contraer</Button> 
+          </CardFooter>
+        )}
+         
+
       </Card>
 
       <div>

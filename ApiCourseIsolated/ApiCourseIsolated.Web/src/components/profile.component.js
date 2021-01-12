@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 import AuthService from "../services/auth.service";
 
 export default class Profile extends Component {
@@ -33,23 +33,10 @@ export default class Profile extends Component {
         <div>
         <header className="jumbotron">
           <h3>
-            <strong>{currentUser.userName}</strong> Profile
+            <strong>{currentUser.userName}</strong> .:: ¡Bienvenido! ::.
           </h3>
         </header>
-        <p>
-          <strong>Token:</strong>{" "}
-          {currentUser.token.substring(0, 20)} ...{" "}
-          {currentUser.token.substr(currentUser.token.length - 20)}
-        </p>
-        <p>
-          <strong>Id:</strong>{" "}
-          {currentUser.expirationDate}
-        </p>
-        <p>
-          <strong>Email:</strong>{" "}
-          {currentUser.userName}
-        </p>
-
+        Diríjase a la sección: <Link to={"/user"} className="nav-link">"Mis vídeos"</Link> Para acceder a los cursos que ha adquirido.
       </div>: null}
       </div>
     );
