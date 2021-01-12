@@ -59,12 +59,12 @@ export default class Login extends Component {
           window.location.reload();
         },
         error => {
-          const resMessage =
-            (error.response &&
+          const resMessage = 'Acceso inválido. Compruebe sus credenciales o intente nuevamente más tarde';
+           /*orig (error.response &&
               error.response.data &&
               error.response.data.message) ||
             error.message ||
-            error.toString();
+            error.toString();*/
 
           this.setState({
             loading: false,

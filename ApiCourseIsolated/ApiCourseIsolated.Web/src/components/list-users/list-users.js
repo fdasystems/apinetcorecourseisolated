@@ -50,11 +50,11 @@ const ListUsers = props => {
         // eslint-disable-next-line react/react-in-jsx-scope
 
         <div key={i}>
-          {shownComments[i] ?<div className="back-drop"> </div> : null}
+ 
 
           {obj.userName ? (
             // eslint-disable-next-line react/react-in-jsx-scope
-            <button onClick={() => toggleComment(i)}>
+            <div>
                       <CardListCustom key={i}
                               itemId={i}
                               itemCardTitle={`Usuario`}
@@ -62,9 +62,11 @@ const ListUsers = props => {
                               itemCardText={obj.Obs}
                               deleteFunction={() => deleteUser(obj.userName)}
                               itemDeleteText="::[X] Eliminar usuario::"
+                              className="btn btn-success"
+                              itemCardFooter={() => toggleComment(i)}
                               >
                       </CardListCustom>
-              </button>
+              </div>
 
           ) : null}
 

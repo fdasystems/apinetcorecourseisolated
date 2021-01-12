@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { UncontrolledCollapse } from "reactstrap";
+import { UncontrolledCollapse, Container, Dropdown, Row, Col, Card, CardImg, CardBody, CardTitle, CardSubtitle,
+  CardText, Badge, Button, Modal, ModalHeader, ModalBody, ModalFooter, Label } from 'reactstrap';
 import ResponsivePlayer from './video/ResposivePlayer';
+import { CardListItemCustom } from './common/CardListItemCustom';
 
 const ExpandMenuItem = (props) => {
 
@@ -11,34 +13,43 @@ const ExpandMenuItem = (props) => {
 
   useEffect(() => {
     const menuData = props.dataToExpand;
- //okconmock/NO-LOADconCallAPI const menuData = Array.from(props.dataToExpand);
-
       const returnMenuItem = (item, i) => {
       let menuItem;
 
       if (item.details===undefined || Array.from(item.details)===undefined || Array.from(item.details).length === 0) {
         menuItem = (
-            <div key={item.id}  className={`item item-${item.order}`}>
-            {console.log('itemorder=>'+ item.order)}
-            <i className="glyphicon glyphicon-chevron-right"></i>
-            {item.order + ' => ' + item.description}
-            <ResponsivePlayer url={item.urlLink} />
-            </div>
+              <CardListItemCustom
+                key={item.id}
+                itemId={item.id}
+                itemCardTitle={item.order}
+                itemCardSubtitle={item.description}
+                itemCardUrlLink={item.urlLink}
+                className={`item item-${item.order}`}
+              >
+              </CardListItemCustom>
         );
       } else {
         let menuItemdetails = Array.from(item.details)
         .sort((a, b) => (a.order < b.order) ? 1 : -1)
         .map((item, i) => {
-          //console.log('menuItemdetails.urlLink=>'+item.urlLink + '   ===>i: =>'+i);
           let menuItem = returnMenuItem(item, i);
           return menuItem;
         });
-        //if (item.name!==undefined) console.log('item.name inside else=>'+item.name+' ===>i: =>'+i);
         menuItem = (
-          <div key={i} className="item">
-            <div className="toggler" id={`toggle-menu-item-${item.id}`}>
-            <i className="glyphicon glyphicon-chevron-right"></i> {item.name}
-            </div>
+          <div key={i}>
+            <Card 
+              id={`toggle-menu-item-${item.id}`} 
+              key={i} 
+              body 
+              outline 
+              color="success" 
+              className="mx-auto my-2">
+                  <CardBody className="btn btn-success">
+                    <CardTitle>Tu curso de:</CardTitle>
+                    <CardSubtitle>{item.name}</CardSubtitle>
+                    <CardText className="font-weight-bold">(Clic para expandir/contraer)</CardText>
+                  </CardBody>
+            </Card>
             <UncontrolledCollapse
               className="details"
               toggler={`#toggle-menu-item-${item.id}`}

@@ -62,27 +62,23 @@ const ListCourses = props => {
       {Array.from(props.items).map((obj,i) => (
         // eslint-disable-next-line react/react-in-jsx-scope
         <div key={i}>
-          {shownComments[i] ?<div className="back-drop">  </div> : null}
+  
 
           {obj.name ? (
             // eslint-disable-next-line react/react-in-jsx-scope
             <div>
-              <table>
-                <thead><button className="btn-secondary" onClick={() => toggleComment(i)}>
-                Editar información de curso
-              </button></thead>
-                <tbody><tr><td><CardListCustom
-              key={i}
-              itemId={i}
-              itemCardTitle={`Curso`}
-              itemCardSubtitle={obj.name}
-              itemCardText={obj.levelRequired}
-              deleteFunction={() => deleteCourse(obj.id)}
-              itemDeleteText="::[X] Eliminar Curso::"
-              >
-              </CardListCustom></td></tr></tbody>
-              </table>
 
+                      <CardListCustom
+                        key={i}
+                        itemId={i}
+                        itemCardTitle={`Curso`}
+                        itemCardSubtitle={obj.name}
+                        itemCardText={obj.levelRequired}
+                        deleteFunction={() => deleteCourse(obj.id)}
+                        itemDeleteText="::[X] Eliminar Curso::"
+                        itemCardFooter={() => toggleComment(i)}
+                        >
+                        </CardListCustom>
 
             </div>
 
