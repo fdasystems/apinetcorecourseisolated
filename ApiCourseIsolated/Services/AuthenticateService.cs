@@ -93,6 +93,20 @@ namespace ApiCourseIsolated.Services
 
             return allClaims.ToList();
         }
+        
+        private static List<string> CollectErrorData(IdentityResult result)
+        {
+            List<string> errorList = new List<string>();
+            //verify how read error
+            foreach (IdentityError error in result.Errors)
+            {
+                //to ModelState
+                errorList.Add(error.Description);
+            }
+
+
+            return errorList;
+        }
         #endregion
 
         #region public_methods
@@ -119,7 +133,7 @@ namespace ApiCourseIsolated.Services
         public async Task<UserDataResultResponseDto> CreateUserAsync(UserRequestDto userRequest)
         {
             UserDataResultResponseDto response = new UserDataResultResponseDto();
-            List<string> errorList = new List<string>();
+
             var user = new CustomUser
             {
                 UserName = userRequest.userName,
@@ -129,19 +143,34 @@ namespace ApiCourseIsolated.Services
             var result = await _userManager.CreateAsync(user, userRequest.password);
             if (result.Succeeded)
             {
-                response.Token =await BuildTokenAsync(user);
+                response.Token = await BuildTokenAsync(user);
                 return response;
             }
+            response.ErrorList = CollectErrorData(result);
+            return response;
+        }
 
-            //verify how read error
-            foreach(IdentityError error in result.Errors) 
+
+
+        public async Task<OperationResultResponseDto> DeleteUserAsync(UserRequestDto userRequest)
+        {
+            //0) value to return
+            OperationResultResponseDto response = new OperationResultResponseDto
             {
-                //to ModelState
-                errorList.Add(error.Description);
+                OperationResult = false
+            };
+
+            //1) Validate User
+            var user = await _userManager.FindByNameAsync(userRequest.userName);
+
+            if (user != null)
+            {
+                var result = await _userManager.DeleteAsync(user);
+                //2) return result 
+                response.OperationResult = result.Succeeded;
+                response.ErrorList = response.OperationResult ? null : CollectErrorData(result);
             }
-
-            response.ErrorList = errorList;
-
+            
             return response;
         }
 
@@ -172,7 +201,7 @@ namespace ApiCourseIsolated.Services
 
             return false;
         }
-        
+
         public async Task<bool> CreateRolAsync(CreateRolRequestDto rolRequest)
         {
             IdentityRole identityRole = new IdentityRole { Name = rolRequest.RoleName };
@@ -182,8 +211,8 @@ namespace ApiCourseIsolated.Services
 
         public async Task<bool> AssignRolToUserAsync(AssignRolToUserRequestDto rolUserRequest)
         {
-            bool response= false;
-            
+            bool response = false;
+
             var user = await _userManager.FindByNameAsync(rolUserRequest.UserName);
 
             if (user != null)
@@ -191,15 +220,16 @@ namespace ApiCourseIsolated.Services
                 IdentityResult result = await _userManager.AddToRoleAsync(user, rolUserRequest.RoleName);
                 response = result.Succeeded;
             }
-            
+
             return response;
         }
 
         public async Task<List<DetailUsersDataResponseDto>> GetAllUsersAsync()
         {
-            return await  _userManager.Users.Select(g => new DetailUsersDataResponseDto() { 
-                     UserName=g.UserName,
-                     Obs=g.Obs
+            return await _userManager.Users.Select(g => new DetailUsersDataResponseDto()
+            {
+                UserName = g.UserName,
+                Obs = g.Obs
             }).ToListAsync();
         }
         #endregion

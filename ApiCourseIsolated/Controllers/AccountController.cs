@@ -73,7 +73,7 @@ namespace ApiCourseIsolated.Controllers
             ModelState.AddModelError("message", _fullErrorList);
             //return BadRequest("invalid login");
             return null;
-           // return BadRequest(ModelState); va este pero hay que cambiar la respuesta del JSON
+            // return BadRequest(ModelState); va este pero hay que cambiar la respuesta del JSON
         }
 
         [Route("Create")]
@@ -83,19 +83,51 @@ namespace ApiCourseIsolated.Controllers
             if (ModelState.IsValid)
             {
                 UserDataResultResponseDto result = await _authenticateService.CreateUserAsync(model);
-    
+
                 if (result.Token != null)
                 {
                     result.Message = "Usuario creado exitosamente.";
                     return Ok(result);
                 }
 
-                foreach (string error in result.ErrorList) 
+                foreach (string error in result.ErrorList)
                 {
                     _fullErrorList += error + " ******************************** ";
                 }
-                
+
                 ModelState.AddModelError("message", _fullErrorList);
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [Route("Delete")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUser([FromBody] UserRequestDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                OperationResultResponseDto result = await _authenticateService.DeleteUserAsync(model);
+
+                if (result.OperationResult)
+                {
+                    result.Message = "El usuario " + model.userName + " ha sido eliminado exitosamente.";
+                    return Ok(result);
+                }
+
+                result.Message = "El usuario " + model.userName + " no ha podido ser eliminado.";
+                ModelState.AddModelError("message", result.Message);
+
+                if (result.ErrorList != null)
+                {
+                    foreach (string error in result.ErrorList)
+                    {
+                        _fullErrorList += error + " ******************************** ";
+                    }
+                    
+                    ModelState.AddModelError("message", _fullErrorList);
+                }
+
             }
 
             return BadRequest(ModelState);
@@ -111,7 +143,7 @@ namespace ApiCourseIsolated.Controllers
 
                 if (result)
                 {
-                    return Ok(result);    
+                    return Ok(result);
                 }
 
                 _fullErrorList = "Falló al intentar asignar atributo al usuario";
@@ -131,7 +163,7 @@ namespace ApiCourseIsolated.Controllers
 
                 if (result)
                 {
-                    return Ok(result);    
+                    return Ok(result);
                 }
 
                 _fullErrorList = "Falló al intentar eliminar atributo al usuario";
@@ -143,9 +175,9 @@ namespace ApiCourseIsolated.Controllers
 
         [Route("DeleteClaimToUserWithParams")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteClaimToUserWithParams(string newClaimName, string newClaimValue,string userEmail)
+        public async Task<IActionResult> DeleteClaimToUserWithParams(string newClaimName, string newClaimValue, string userEmail)
         {
-            ClaimToUserRequestDto model = new ClaimToUserRequestDto() { NewClaimName=newClaimName, NewClaimValue=newClaimValue, UserEmail=userEmail };
+            ClaimToUserRequestDto model = new ClaimToUserRequestDto() { NewClaimName = newClaimName, NewClaimValue = newClaimValue, UserEmail = userEmail };
 
             if (ModelState.IsValid)
             {
@@ -153,7 +185,7 @@ namespace ApiCourseIsolated.Controllers
 
                 if (result)
                 {
-                    return Ok(result);    
+                    return Ok(result);
                 }
 
                 _fullErrorList = "Falló al intentar eliminar atributo al usuario";
@@ -193,7 +225,7 @@ namespace ApiCourseIsolated.Controllers
                 {
                     return Ok(result);
                 }
-                _fullErrorList="Falló al intentar asignar Rol";
+                _fullErrorList = "Falló al intentar asignar Rol";
                 ModelState.AddModelError("message", _fullErrorList);
             }
 
@@ -218,7 +250,7 @@ namespace ApiCourseIsolated.Controllers
                 _fullErrorList = "Ocurrio un error al tratar de obtener usuarios.";
                 _fullErrorList += "Detalles: " + ex.Message + "|||" + ex.InnerException != null ? ex.InnerException.ToString() : string.Empty;
             }
-            
+
             ModelState.AddModelError("message", _fullErrorList);
             return BadRequest(ModelState);
         }

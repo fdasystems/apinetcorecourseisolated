@@ -3,12 +3,11 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable react/jsx-no-comment-textnodes */
 // eslint-disable-next-line no-undef
-//const { useState, Fragment } = React;
-//import React, { Component } from "react";
 import  { useState } from "react";
 import * as React from 'react';
 import {ModalEditUser} from './../modal-edit-user/modal-edit-user';
 import { CardListCustom } from '../common/CardListCustom';
+import UserService from "../../services/user.service";
 
 const ListUsers = props => {
   const [shownComments, setShownComments] = useState({});
@@ -20,29 +19,24 @@ const ListUsers = props => {
     }));
   };
 
-  const deleteUser = (id) => {
-    console.log(id);
-    /*
-        setSelectSetCourseToUser(false);
-        setLoadingSetCourseToUser(true);
-        const dto :  CourseToUser = {
-          userEmail: userName,
-          newClaimName: courseClaimName,
-          newClaimValue: id
-        };
-        UserService
-            .deleteCourseToUser(dto)
-            .then(r => {
-              console.log(r);          //setListCoursesUser(r.data);
-              setLoadingSetCourseToUser(false);
-              loadGrid();
-            })
-            .catch(() => { setLoadingSetCourseToUser(false);
-                          notify('Eliminación de curso a usuario', 'Errores al obtener datos', 'danger')
-                          });
-                          */
+  const deleteUser = async (userName) => {
+        
+    const dto :  UserModel = {
+          userName: userName,
+          password: '',
+          };
 
+    return await UserService
+        .deleteUser(dto)
+        .then(response => {
+          return response.data; 
+        })
+        .catch((error) => { 
+          console.log(error);
+        });            
   }
+
+
 
   return (
     <>
@@ -64,6 +58,7 @@ const ListUsers = props => {
                               itemDeleteText="::[X] Eliminar usuario::"
                               className="btn btn-success"
                               itemCardFooter={() => toggleComment(i)}
+                              urlToRedirect="admin"
                               >
                       </CardListCustom>
               </div>

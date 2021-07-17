@@ -7,13 +7,6 @@ import {CourseToUser} from '../../services/types/CourseToUser.ts';
 //'./../services/types/CourseToUser.ts';
 import { CardListCustom } from '../common/CardListCustom';
 
-/* Then can be moved to interface.course.ts
-interface Course {
-  id: number;
-  name: string;
-} */
-
-
 const courseClaimName = 'course'; //TODO: then move to common or constant place
 
 export const ModalEditUser = ({show, close, userName, Obs}) =>
@@ -46,9 +39,7 @@ export const ModalEditUser = ({show, close, userName, Obs}) =>
                       setLoadingGrid(false);
                       notify('Carga de cursos de usuario', 'Errores al obtener datos', 'danger')
                       });
-    } /*else if (!pageLoad) {
-      notify('Carga', 'Ingrese datos', 'danger');
-    }*/
+    } 
   };
 
   const loadCourses = () =>{
@@ -98,7 +89,7 @@ export const ModalEditUser = ({show, close, userName, Obs}) =>
         UserService
             .postCourseToUser(dto)
             .then(r => {
-              console.log(r);          //setListCoursesUser(r.data);
+              console.log(r);
               setLoadingSetCourseToUser(false);
               loadGrid();
             })
@@ -108,13 +99,12 @@ export const ModalEditUser = ({show, close, userName, Obs}) =>
     }
     else
     {
-      //alert('Debe seleccionar un valor');
       notify('Aignación de curso a usuario', 'Debe seleccionar un valor', 'danger' )
       setSelectSetCourseToUser(true);
     }
   }
 
-  const deleteCourseToUser = (id) => {
+  const deleteCourseToUser = async (id) => {
     if (id>0)
     {
         setSelectSetCourseToUser(false);
@@ -124,12 +114,22 @@ export const ModalEditUser = ({show, close, userName, Obs}) =>
           newClaimName: courseClaimName,
           newClaimValue: id
         };
-        UserService
+        return await  UserService
             .deleteCourseToUser(dto)
-            .then(r => {
-              console.log(r);          //setListCoursesUser(r.data);
+            .then(response => {
+              console.log(response);
               setLoadingSetCourseToUser(false);
-              loadGrid();
+              //loadGrid();
+              if (response.status)
+              {
+                let result = response.status===200;
+                  const dtoResult :  ResponseDelete = {
+                    operationResult: result,
+                    message: result ? "Elemento eliminado exitosamente": "Error al eliminar"
+                  };
+                  return dtoResult;
+              }
+              return response.data;
             })
             .catch(() => { setLoadingSetCourseToUser(false);
                           notify('Eliminación de curso a usuario', 'Errores al obtener datos', 'danger')
@@ -137,7 +137,6 @@ export const ModalEditUser = ({show, close, userName, Obs}) =>
     }
     else
     {
-      //alert('Debe seleccionar un valor');
       notify('Eliminación de curso a usuario', 'Debe seleccionar un valor', 'danger' )
       setSelectSetCourseToUser(true);
     }
@@ -183,6 +182,7 @@ export const ModalEditUser = ({show, close, userName, Obs}) =>
                       itemCardText={item.name}
                       deleteFunction={() => deleteCourseToUser(item.levelRequired)}
                       itemDeleteText="::[X] Eliminar curso del usuario::"
+                      urlToRedirect="admin"
                       >
                     </CardListCustom>
                   ) )

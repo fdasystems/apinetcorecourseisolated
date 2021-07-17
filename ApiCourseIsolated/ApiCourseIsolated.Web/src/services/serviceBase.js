@@ -78,6 +78,7 @@ export default class ServiceBase {
           this.redirectOnLogout(result);
           return result;
       } catch (error) {
+        console.log('deleteWithBody', error);
         this.redirectOnError(error);
       }
   };

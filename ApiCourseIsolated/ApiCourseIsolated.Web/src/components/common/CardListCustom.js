@@ -1,11 +1,13 @@
 import { type } from 'os';
 import React, { useState } from 'react';
 import { Container, Dropdown, Row, Col, Card, CardImg, CardBody, CardTitle, CardSubtitle,
-        CardText, Badge, Button, Modal, ModalHeader, ModalBody, ModalFooter, Label, CardFooter } from 'reactstrap';
+         CardText, Badge, Button, Modal, ModalHeader, ModalBody, ModalFooter, Label,
+         CardFooter } from 'reactstrap';
 import './commonStyleDesign.css';
 import "../../../node_modules/noty/lib/themes/bootstrap-v4.css";
 
-export const CardListCustom = ({itemId, itemCardTitle, itemCardSubtitle, itemCardText, deleteFunction, itemDeleteText, itemCardFooter}) =>
+
+export const CardListCustom = ({itemId, itemCardTitle, itemCardSubtitle, itemCardText, deleteFunction, itemDeleteText, itemCardFooter, urlToRedirect}) =>
 {
   const [shownHoverList, setShownHoverList] = useState({});
   const toggleHoverList = id => {
@@ -17,23 +19,53 @@ export const CardListCustom = ({itemId, itemCardTitle, itemCardSubtitle, itemCar
 
   const [modal, setModal] = useState(false);
   const [modalLoadingDelete, setModalLoadingDelete] = useState(false);
+  const [modalAfterDelete, setModalAfterDelete] = useState(false);
+  const [deleteFlag, setDeleteFlag] = useState(true);
+  const [deleteMessage, setDeleteMessage] = useState('');
 
-  const toggle = () => setModal(!modal);
-
+  const toggle = () => { 
+                          setModal(!modal); 
+                          setModalLoadingDelete(false); 
+                          setModalAfterDelete(false);
+                          setDeleteMessage('');
+                        }
 
   const confirmFunction = id => {
-    console.log('but1 click', id);
     setModalLoadingDelete(true);
-    deleteFunction(id);
-    //setModalLoadingDelete(false);
+  
+    deleteFunction(id).then(response => {
+      if (response!=null) 
+      {
+        setDeleteFlag(response.operationResult);
+        setDeleteMessage(response.message);
+      }
+      else
+      {
+        setDeleteFlag(false);
+      }
+      setModalAfterDelete(true);
+    }).catch(err => {
+      setDeleteFlag(false);
+      setModalAfterDelete(true);
+    });
+
   };
 
 
   const expandFunction = id => {
-    console.log('but2 click', id);
     itemCardFooter(id);
   };
 
+  const controlButtonFunction = () => {
+    toggle();
+    let hrefToRedirect =  "/";
+    if (urlToRedirect)
+    {
+      hrefToRedirect = hrefToRedirect + urlToRedirect;
+    }
+    console.log(hrefToRedirect);
+    window.location.href = hrefToRedirect;
+  };
 
 
 
@@ -61,7 +93,6 @@ export const CardListCustom = ({itemId, itemCardTitle, itemCardSubtitle, itemCar
           </CardFooter>
         )}
          
-
       </Card>
 
       <div>
@@ -82,12 +113,45 @@ export const CardListCustom = ({itemId, itemCardTitle, itemCardSubtitle, itemCar
                               <Button  color="secondary" onClick={toggle}>Cancelar</Button>
                               </>
                             )
-                  :  <Badge>  ...Eliminando datos...  ...Espere un momento por favor... </Badge>
+                            :  
+                            (
+                            <Badge>  ...Eliminando datos...  ...Espere un momento por favor... </Badge>
+                            )
         }
         </ModalFooter>
       </Modal>
     </div>
 
+
+    <div>
+      <Modal isOpen={modalAfterDelete}>
+        <ModalHeader>Resultado Operación</ModalHeader>
+        <ModalBody>
+        {deleteFlag ?
+                                                        (
+                                                          <div>
+                                                          <Badge color="primary" > Éxito. </Badge>
+                                                          <Badge color="primary" > {deleteMessage}</Badge>
+                                                          </div>
+                                                        ) 
+                                                        :
+                                                        (
+                                                          <div>
+                                                          <Badge color="error" > Han ocurrido errores al intentar eliminar. </Badge>
+                                                          <Badge color="error" > {deleteMessage} </Badge>
+                                                          </div>
+                                                        ) 
+
+        }
+        </ModalBody>
+        <ModalFooter  style={{
+          display: "flex",
+          justifyContent: "space-between"
+        }}>
+          <Button color="danger" onClick={() => controlButtonFunction()}>Cerrar</Button>{' '}
+        </ModalFooter>
+      </Modal>
+    </div>
     </>
   )
 }

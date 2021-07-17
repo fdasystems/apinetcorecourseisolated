@@ -14,7 +14,6 @@ import { CardListCustom } from '../common/CardListCustom';
 
 const ListCourses = props => {
   const [shownComments, setShownComments] = useState({});
-  const [deleteSuccess, setDeleteSuccess] = useState(false);
 
   const toggleComment = id => {
     setShownComments(prevShownComments => ({
@@ -24,36 +23,29 @@ const ListCourses = props => {
   };
 
 
-  const deleteCourse = (id) => {
+  const deleteCourse = async (id) => {
     if (id>0)
     {
         console.log('borrando del curso id:',id);
-        CourseService
+        return await CourseService
             .postDeleteCourse(id)
-            .then(r => {
-              console.log(r);
-              //setLoadingDeleteVideoToCourse(false);
-              //loadGrid();
-              // eslint-disable-next-line no-restricted-globals
-             // history.push(`/admin`);
-             setDeleteSuccess(true);
+            .then(response => {
+              console.log(response);
+              if (response.status)
+              {
+                let result = response.status===200;
+                  const dtoResult :  ResponseDelete = {
+                    operationResult: result,
+                    message: result ? "Elemento eliminado exitosamente": "Error al eliminar"
+                  };
+                  return dtoResult;
+              }
+              return response.data;
             })
-            .catch((error) => { //setLoadingDeleteVideoToCourse(false);
-                           //notify('Eliminación de cursos', 'Errores al ejecutar operación', 'danger')
-                           console.log(error);
-                          });
+            .catch((error) => { 
+              console.log(error);
+            });
     }
-    else
-    {
-      //alert('Debe seleccionar un valor');
-      //notify('Eliminación de curso', 'Debe seleccionar un valor', 'danger' )
-      //setLoadingDeleteVideoToCourse(false);
-    }
-  }
-
-
-  if (deleteSuccess) {
-    return <Redirect to='/admin' />
   }
 
 
@@ -77,6 +69,7 @@ const ListCourses = props => {
                         deleteFunction={() => deleteCourse(obj.id)}
                         itemDeleteText="::[X] Eliminar Curso::"
                         itemCardFooter={() => toggleComment(i)}
+                        urlToRedirect="managecourses"
                         >
                         </CardListCustom>
 

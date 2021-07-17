@@ -1,17 +1,10 @@
 import React, { useState, useContext, useEffect, ChangeEvent } from 'react';
 import CourseService from  '../../services/course.service';
-import { Container, Dropdown, Row, Col, Card, CardImg, CardBody, CardTitle, CardSubtitle, CardText, Badge, Button } from 'reactstrap';
-//import {Row, Col } from 'react-boostrap';
+import { Container, Dropdown, Row, Col, Card, CardImg, CardBody, CardTitle, 
+         CardSubtitle, CardText, Badge, Button } from 'reactstrap';
 import './modal-edit-course.css';
 import {CourseToUser} from '../../services/types/CourseToUser.ts';
-//'./../services/types/CourseToUser.ts';
 import { CardListCustom } from '../common/CardListCustom';
-
-/* Then can be moved to interface.course.ts
-interface Course {
-  id: number;
-  name: string;
-} */
 
 
 const courseClaimName = 'course'; //TODO: then move to common or constant place
@@ -57,7 +50,6 @@ export const ModalEditCourse = ({show, close, name, id, levelRequired}) =>
 
   useEffect(() => {
     loadGrid();
-    //loadCourses();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -97,7 +89,8 @@ export const ModalEditCourse = ({show, close, name, id, levelRequired}) =>
               setLoadingSetVideoToCourse(false);
               loadGrid();
             })
-            .catch(() => { setLoadingSetVideoToCourse(false);
+            .catch(() => { 
+                           setLoadingSetVideoToCourse(false);
                            notify('Carga de cursos de usuario', 'Errores al obtener datos', 'danger')
                           });
     }
@@ -109,35 +102,38 @@ export const ModalEditCourse = ({show, close, name, id, levelRequired}) =>
     }
   }
 
-  const deleteVideoToCourse = (id) => {
+  const deleteVideoToCourse = async (id) => {
     if (id>0)
     {
-        //setSelectSetVideoToCourse(false);
         setLoadingDeleteVideoToCourse(true);
-        /*const dto :  VideoToCourse = {
-          urlLink: urlLink,
-          order: order,
-          description: description,
-          mainCourseId: id
-        };*/
         console.log('borrando del video id:',id);
         // eslint-disable-next-line no-restricted-globals
 
-        CourseService
+        return await CourseService
             .postDeleteVideoFromCourse(id)
-            .then(r => {
-              console.log(r);          //setListCoursesUser(r.data);
+            .then(response => {
+              console.log(response);
               setLoadingDeleteVideoToCourse(false);
-              loadGrid();
+              if (response.status)
+              {
+                let result = response.status===200;
+                  const dtoResult :  ResponseDelete = {
+                    operationResult: result,
+                    message: result ? "Elemento eliminado exitosamente": "Error al eliminar"
+                  };
+                  return dtoResult;
+              }
+
+              return response.data; 
             })
-            .catch(() => { setLoadingDeleteVideoToCourse(false);
+            .catch(() => { 
+                          setLoadingDeleteVideoToCourse(false);
                           notify('Carga de cursos de usuario', 'Errores al obtener datos', 'danger')
                           });
 
     }
     else
     {
-      //alert('Debe seleccionar un valor');
       notify('Eliminación de video de curso', 'Debe seleccionar un valor', 'danger' )
       setLoadingDeleteVideoToCourse(false);
     }
@@ -182,6 +178,7 @@ export const ModalEditCourse = ({show, close, name, id, levelRequired}) =>
                                             itemCardText={item.description}
                                             deleteFunction={() => deleteVideoToCourse(item.id)}
                                             itemDeleteText="::[X] Eliminar video::"
+                                            urlToRedirect="managecourses"
                                             >
                             </CardListCustom>
                         ) )
@@ -215,7 +212,7 @@ export const ModalEditCourse = ({show, close, name, id, levelRequired}) =>
                 <p>Debe seleccionar un orden y url para el video (la descripcion es opcional)</p>
               )}
 
-{!loadingSetVideoToCourse &&
+        {!loadingSetVideoToCourse &&
           (
             <button onClick={() => setVideoToCourse()} className="btn-add"> ::Agregar video al curso [Enviar asignación]:: </button>
           )
